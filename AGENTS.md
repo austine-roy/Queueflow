@@ -19,13 +19,18 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 1 — COMPLETED**
 - **Milestone 2 — COMPLETED**
 - **Milestone 3 — COMPLETED**
-- **Milestone 4 — CURRENT / NEXT DEVELOPMENT TARGET**
+- **Milestone 4 — COMPLETED**
+- **Milestone 5 — CURRENT / NEXT DEVELOPMENT TARGET**
 
 The exact implementation of completed milestones must always be verified against the actual codebase rather than assumed from this document.
 
 ### Current Milestone
 
-**Milestone 4 — Real-Time Queue Layer**
+**Milestone 5 — Next Development Phase**
+
+The exact scope of Milestone 5 must be verified from the existing project documentation, Git history, and current implementation before development begins.
+
+Do not assume Milestone 5 requirements without inspecting the repository.
 
 Planned scope:
 
@@ -183,7 +188,7 @@ If documentation and code disagree, verify the implementation and update the doc
 
 ---
 
-## 8. Milestone 4 — Real-Time Queue Layer
+## 8. Milestone 4 — Real-Time Queue Layer (COMPLETED)
 
 Milestone 4 is the current development target.
 
@@ -507,12 +512,13 @@ Update this section after major development sessions.
 Milestone 1 — Completed
 Milestone 2 — Completed
 Milestone 3 — Completed
+Milestone 4 — Completed
 ```
 
 ### Current
 
 ```text
-Milestone 5 — AI foundations (recommended next target)
+Milestone 5 — Next Development Phase
 ```
 
 ### Known Issues
@@ -528,14 +534,32 @@ No issues documented here yet.
 Update this section as work progresses.
 
 ```text
-1. Connect a replaceable camera/video AI measurement provider.
-2. Preserve the existing persistence and WebSocket publisher interface.
-3. Add AI pipeline tests and performance checks.
+1. Verify the completed Milestones 1–4 implementation.
+2. Inspect the repository documentation and Git history for Milestone 5 requirements.
+3. Audit any existing Milestone 5 work.
+4. Implement the next Milestone 5 task incrementally.
+5. Add/complete relevant tests.
+6. Verify frontend/backend/AI/database integration where applicable.
+7. Update documentation.
+8. Update this AGENTS.md.
+9. Commit and push the completed work.
 ```
 
 ---
 
-## 20. Codex Session Handoff
+## 20. Milestone 4 Completion
+
+Milestone 4 has been completed.
+
+The next Codex session must treat Milestones 1–4 as completed unless the repository reveals a verified defect or unfinished implementation.
+
+Do not recreate Milestone 4.
+
+Before beginning Milestone 5, inspect the actual codebase, tests, documentation, and Git history to determine the exact remaining scope.
+
+---
+
+## 21. Codex Session Handoff
 
 At the end of every significant Codex session, update this file.
 
@@ -588,7 +612,7 @@ Do not claim something is complete unless it has been verified.
 
 ---
 
-## 21. New Codex Session Procedure
+## 22. New Codex Session Procedure
 
 Every new Codex session should:
 
@@ -599,15 +623,16 @@ Every new Codex session should:
 4. Run git status.
 5. Inspect the current branch.
 6. Inspect recent commits.
-7. Verify Milestones 1–3.
-8. Inspect current Milestone 4 implementation.
-9. Identify what remains.
-10. Implement only the required next step.
-11. Run relevant tests.
-12. Update documentation.
-13. Update AGENTS.md.
-14. Commit changes.
-15. Push to GitHub when appropriate.
+7. Verify Milestones 1–4.
+8. Inspect current Milestone 5 implementation.
+9. Determine the exact Milestone 5 requirements from project documentation and Git history.
+10. Identify what remains.
+11. Implement only the required next step.
+12. Run relevant tests.
+13. Update documentation.
+14. Update AGENTS.md.
+15. Commit changes.
+16. Push to GitHub when appropriate.
 ```
 
 Never restart the project.
@@ -616,7 +641,7 @@ Never recreate completed milestones unless a verified bug requires it.
 
 ---
 
-## 22. Golden Rule
+## 23. Golden Rule
 
 The QueueFlow repository is the source of truth.
 
@@ -625,31 +650,3 @@ When continuing work:
 **Inspect → Understand → Modify → Test → Document → Commit → Push**
 
 Build on the existing implementation and preserve working functionality.
-
----
-
-## Session Handoff — 2026-09-01
-
-### Completed
-
-- Completed Milestone 4 real-time delivery: `/ws/queues`, safe multi-client connection handling, a configurable gradual simulator, persistence, and transition-based alerts.
-- Unified simulator and REST measurement broadcasts through one real-time publisher.
-- Added reconnect coverage for the frontend WebSocket client and failure/publisher coverage for the backend.
-- Updated the real-time setup and event documentation.
-
-### Tested
-
-- Backend: `.venv/bin/python -m pytest` — 20 tests passed.
-- Frontend: `npm test -- --run`, `npm run lint`, and `npm run build`.
-
-### Remaining
-
-- Milestone 5 AI/video detection and tracking work has not begun.
-
-### Known Issues
-
-- The frontend production build reports a non-blocking chunk-size warning.
-
-### Next Task
-
-Implement a replaceable video/camera measurement provider for Milestone 5, publishing through the established persistence and real-time interfaces.
