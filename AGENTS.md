@@ -23,7 +23,7 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 5 — COMPLETED**
 - **Milestone 6 — COMPLETED**
 - **Milestone 7 — COMPLETED**
-- **Milestone 8 — COMPLETED**
+- **Milestone 8 — COMPLETED & RUNTIME VERIFIED**
 - **Milestone 9 — CURRENT / NEXT DEVELOPMENT TARGET**
 
 The exact implementation of completed milestones must always be verified against the actual codebase rather than assumed from this document.
@@ -520,7 +520,7 @@ Milestone 4 — Completed
 Milestone 5 — Completed
 Milestone 6 — Completed
 Milestone 7 — Completed
-Milestone 8 — Completed
+Milestone 8 — Completed & Runtime Verified
 ```
 
 ### Current
