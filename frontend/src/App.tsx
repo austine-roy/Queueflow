@@ -1,0 +1,13 @@
+import { Navigate, Route, Routes } from "react-router-dom";
+import { AppShell } from "./components/layout/AppShell";
+import { Alerts } from "./pages/Alerts";
+import { Analytics } from "./pages/Analytics";
+import { Dashboard } from "./pages/Dashboard";
+import { QueueDetails } from "./pages/QueueDetails";
+import { Queues } from "./pages/Queues";
+import { Settings } from "./pages/Settings";
+import { QueueWebSocketProvider } from "./hooks/useQueueWebSocket";
+
+export default function App() {
+  return <QueueWebSocketProvider><Routes><Route element={<AppShell />}><Route index element={<Navigate to="/dashboard" replace />} /><Route path="dashboard" element={<Dashboard />} /><Route path="queues" element={<Queues />} /><Route path="queues/:id" element={<QueueDetails />} /><Route path="analytics" element={<Analytics />} /><Route path="alerts" element={<Alerts />} /><Route path="settings" element={<Settings />} /></Route><Route path="*" element={<Navigate to="/dashboard" replace />} /></Routes></QueueWebSocketProvider>;
+}
