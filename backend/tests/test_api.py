@@ -1,9 +1,13 @@
 """API behavior tests using a temporary SQLite database."""
 
+import json
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.models.location import Location
+from app.core.database import get_db
+from app.main import app
 
 
 def create_location(session: Session) -> Location:
@@ -16,6 +20,43 @@ def create_location(session: Session) -> Location:
 
 def test_health(client: TestClient) -> None:
     assert client.get("/api/health").json() == {"status": "ok", "service": "queueflow-backend"}
+
+
+def test_readiness_and_metrics(client: TestClient) -> None:
+    assert client.get("/api/ready").json() == {"status": "ready", "database": "ok"}
+    metrics = client.get("/api/metrics")
+    assert metrics.status_code == 200
+    assert metrics.headers["content-type"].startswith("text/plain; version=0.0.4")
+    assert "queueflow_http_requests_total" in metrics.text
+    assert "queueflow_websocket_connections_active" in metrics.text
+
+
+def test_readiness_returns_503_when_database_is_unavailable(client: TestClient) -> None:
+    class BrokenSession:
+        def execute(self, _statement):
+            raise RuntimeError("database unavailable")
+
+    def broken_database():
+        yield BrokenSession()
+
+    app.dependency_overrides[get_db] = broken_database
+    response = client.get("/api/ready")
+    app.dependency_overrides.pop(get_db)
+    assert response.status_code == 503
+    assert response.json()["detail"] == "Database unavailable"
+
+
+def test_request_logging_and_request_ids_are_safe(client: TestClient, caplog: pytest.LogCaptureFixture) -> None:
+    caplog.set_level("INFO", logger="queueflow")
+    response = client.post("/api/auth/login", headers={"X-Request-ID": "request-123", "Authorization": "Bearer private-token"}, json={"email": "admin@example.com", "password": "CorrectHorseBatteryStaple!"})
+    assert response.headers["x-request-id"] == "request-123"
+    records = "\n".join(record.message for record in caplog.records)
+    complete = next(json.loads(record.message) for record in caplog.records if '"event":"request_complete"' in record.message)
+    assert complete["request_id"] == "request-123"
+    assert complete["path"] == "/api/auth/login"
+    assert "CorrectHorseBatteryStaple!" not in records
+    assert "private-token" not in records
+    assert "Authorization" not in records
 
 
 def test_api_allows_configured_frontend_origin(client: TestClient) -> None:

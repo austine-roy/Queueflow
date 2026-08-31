@@ -10,6 +10,8 @@ cp .env.example .env
 docker compose up --build -d
 docker compose ps
 curl http://localhost:8000/api/health
+curl http://localhost:8000/api/ready
+curl http://localhost:8000/api/metrics
 ```
 
 Open `http://localhost:8080`. The backend applies Alembic migrations before starting. The simulator remains disabled unless explicitly configured; never use the development simulator as a production measurement source.
@@ -18,11 +20,14 @@ Open `http://localhost:8080`. The backend applies Alembic migrations before star
 
 ```bash
 docker compose logs --tail=100 backend
+docker compose logs --tail=100 backend | grep 'request_complete\|request_error'
 docker compose exec postgres pg_isready -U queueflow -d queueflow
 docker compose down
 ```
 
 `docker compose down -v` also removes the persisted PostgreSQL volume and should only be used when data deletion is intended.
+
+`/api/health` is a liveness probe; `/api/ready` also checks PostgreSQL. `/api/metrics` exposes lightweight JSON request/error, WebSocket, observation, and latency counters for operational inspection. Backend logs are structured JSON and omit credentials, tokens, and secrets.
 
 ## Configuration
 

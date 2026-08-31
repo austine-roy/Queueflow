@@ -47,3 +47,9 @@
 - [x] Protect REST and WebSocket access with `admin`, `operator`, and `viewer` roles.
 - [x] Add in-memory frontend authentication state, protected routes, role-aware controls, and access-denied handling.
 - [x] Add authentication/RBAC tests and verify backend, frontend, lint, and production build checks.
+
+## Milestone 10 — Observability & production monitoring
+
+- [x] Add safe structured JSON request, authentication, camera, and WebSocket logs.
+- [x] Add liveness, PostgreSQL readiness, and Prometheus-compatible in-process metrics.
+- [x] Verify the production Compose stack, health/readiness, metrics, and request ID logging.

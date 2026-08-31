@@ -14,6 +14,7 @@ from app.models.enums import UserRole
 from app.models.camera import Camera
 from app.models.location import Location
 from app.models.queue import Queue
+from app.core.observability import metrics, log
 from app.realtime.publisher import publish_measurement
 from app.realtime.websocket_manager import manager
 from app.schemas.camera import CameraCreate, CameraObservationCreate, CameraRead, CameraUpdate
@@ -92,6 +93,7 @@ async def ingest_observation(camera_id: int, payload: CameraObservationCreate, s
     """Persist a camera observation and deliver the resulting real-time events."""
 
     camera = get_camera_or_404(session, camera_id)
+    metrics.observations += 1
     if not camera.is_active:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Camera is inactive")
     if camera.queue_id is None:
@@ -100,5 +102,6 @@ async def ingest_observation(camera_id: int, payload: CameraObservationCreate, s
     if queue is None:  # Defensive guard for a queue removed after camera configuration.
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Camera queue is unavailable")
     record = record_measurement(session, queue, payload, get_settings())
+    log("camera_observation_recorded", camera_id=camera.id, queue_id=queue.id)
     await publish_measurement(record, manager)
     return CameraRead.model_validate(camera)

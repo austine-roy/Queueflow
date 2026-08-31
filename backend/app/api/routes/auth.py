@@ -10,6 +10,7 @@ from app.models.enums import UserRole
 from app.models.user import User
 from app.schemas.auth import LoginRequest, TokenRead, UserCreate, UserRead, UserUpdate
 from app.services.auth_service import create_access_token, hash_password, verify_password
+from app.core.observability import log
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 users_router = APIRouter(prefix="/users", tags=["Users"])
@@ -19,7 +20,9 @@ users_router = APIRouter(prefix="/users", tags=["Users"])
 def login(payload: LoginRequest, session: Session = Depends(get_db)) -> TokenRead:
     user = session.query(User).filter(User.email == payload.email.lower()).one_or_none()
     if user is None or not user.is_active or not verify_password(payload.password, user.password_hash):
+        log("login_failed")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password", headers={"WWW-Authenticate": "Bearer"})
+    log("login_succeeded", user_id=user.id, role=user.role.value)
     return TokenRead(access_token=create_access_token(user.id, user.role, get_settings()), user=UserRead.model_validate(user))
 
 

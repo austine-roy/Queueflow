@@ -25,13 +25,14 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 7 — COMPLETED**
 - **Milestone 8 — COMPLETED & RUNTIME VERIFIED**
 - **Milestone 9 — COMPLETED & VERIFIED**
-- **Milestone 10 — CURRENT / OBSERVABILITY & PRODUCTION MONITORING**
+- **Milestone 10 — COMPLETED & VERIFIED**
+- **Milestone 11 — NEXT DEVELOPMENT TARGET**
 
 **### Current Milestone**
 
-**Milestone 10 — Observability & Production Monitoring**
+**Milestone 11 — Next Development Phase**
 
-Milestone 9 is complete and verified. Milestone 10 is now defined as the production observability and monitoring phase.
+Milestones 1–10 are complete and verified. Define Milestone 11 from the repository roadmap and requirements before implementation.
 
 The goal is to make QueueFlow easier to operate, diagnose, and monitor in production without disrupting the completed functionality from Milestones 1–9.
 

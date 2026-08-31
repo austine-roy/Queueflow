@@ -59,4 +59,4 @@ The current work plan is in [docs/development/roadmap.md](docs/development/roadm
 
 ## Status
 
-Milestone 9 — Authentication and role-based access control verified. QueueFlow uses Argon2 password hashing, short-lived JWT access tokens, in-memory browser token storage, protected REST endpoints, and authenticated WebSocket subprotocols. See the backend and infrastructure documentation for setup details.
+Milestone 10 — Observability and production monitoring verified. The backend provides structured JSON logs, liveness (`/api/health`), PostgreSQL readiness (`/api/ready`), and Prometheus-compatible metrics (`/api/metrics`); see the infrastructure runbook for production checks.
