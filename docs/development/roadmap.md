@@ -39,4 +39,4 @@
 ## Milestone 8 — Deployment
 
 - [x] Add production Docker Compose configuration, health checks, and deployment documentation.
-- [ ] Run the complete Docker Compose smoke test with Docker Desktop running and a real `.env` password.
+- [x] Build the production images and run the complete Docker Compose smoke test, including proxied API and WebSocket checks.

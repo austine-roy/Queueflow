@@ -7,15 +7,18 @@ Create Date: 2026-08-24
 
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
 
 revision = "20260824_0001"
 down_revision = None
 branch_labels = None
 depends_on = None
 
-queue_status = sa.Enum("NORMAL", "BUSY", "CROWDED", "CRITICAL", "CLOSED", name="queue_status")
-camera_source_type = sa.Enum("VIDEO_FILE", "RTSP", "WEBCAM", "SIMULATED", name="camera_source_type")
-alert_severity = sa.Enum("INFO", "WARNING", "CRITICAL", name="alert_severity")
+# The types are explicitly created below. Prevent table creation from issuing a
+# second CREATE TYPE statement when this migration runs on PostgreSQL.
+queue_status = postgresql.ENUM("NORMAL", "BUSY", "CROWDED", "CRITICAL", "CLOSED", name="queue_status", create_type=False)
+camera_source_type = postgresql.ENUM("VIDEO_FILE", "RTSP", "WEBCAM", "SIMULATED", name="camera_source_type", create_type=False)
+alert_severity = postgresql.ENUM("INFO", "WARNING", "CRITICAL", name="alert_severity", create_type=False)
 
 
 def upgrade() -> None:

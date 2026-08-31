@@ -59,4 +59,4 @@ The current work plan is in [docs/development/roadmap.md](docs/development/roadm
 
 ## Status
 
-Milestone 8 — Deployment configuration is ready for runtime verification. Docker Compose defines PostgreSQL, FastAPI, and an Nginx-served dashboard with health checks and same-origin API/WebSocket proxying.
+Milestone 8 — Deployment verified. Docker Compose builds and starts PostgreSQL, FastAPI, and an Nginx-served dashboard; health checks, proxied API requests, and WebSocket handshakes all succeed.
