@@ -55,8 +55,8 @@ For the dashboard, use Node.js 20+, configure `frontend/.env` with `VITE_API_BAS
 3. Run the relevant checks before requesting review.
 4. Do not commit credentials, generated model weights, or local database data.
 
-The current work plan is in [docs/development/roadmap.md](docs/development/roadmap.md).
+The current work plan is in [docs/development/roadmap.md](docs/development/roadmap.md). Production setup and operational checks are documented in [infrastructure/README.md](infrastructure/README.md).
 
 ## Status
 
-Milestone 7 — Advanced capabilities: complete. QueueFlow includes alert lifecycle management, server-side historical analytics, multi-camera filters, and transparent history-informed wait estimates.
+Milestone 8 — Deployment configuration is ready for runtime verification. Docker Compose defines PostgreSQL, FastAPI, and an Nginx-served dashboard with health checks and same-origin API/WebSocket proxying.

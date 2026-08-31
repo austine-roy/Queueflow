@@ -38,4 +38,5 @@
 
 ## Milestone 8 — Deployment
 
-- [ ] Add Docker Compose after services work locally, production configuration, and final verification.
+- [x] Add production Docker Compose configuration, health checks, and deployment documentation.
+- [ ] Run the complete Docker Compose smoke test with Docker Desktop running and a real `.env` password.

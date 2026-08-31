@@ -1,0 +1,12 @@
+.git
+.DS_Store
+.env
+**/.env
+**/__pycache__
+**/.pytest_cache
+**/.venv
+**/node_modules
+**/dist
+outputs
+work
+*.pyc
