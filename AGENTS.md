@@ -21,33 +21,40 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 3 — COMPLETED**
 - **Milestone 4 — COMPLETED**
 - **Milestone 5 — COMPLETED**
-- **Milestone 6 — CURRENT / NEXT DEVELOPMENT TARGET**
+- **Milestone 6 — COMPLETED**
+- **Milestone 7 — CURRENT / NEXT DEVELOPMENT TARGET**
 
 The exact implementation of completed milestones must always be verified against the actual codebase rather than assumed from this document.
 
 ### Current Milestone
 
-**Milestone 6 — Camera Observation Integration**
+**Milestone 7 — Next Development Phase**
 
-The exact scope of Milestone 6 must be verified from the existing project documentation, Git history, and current implementation before development begins.
+The exact scope of Milestone 7 must be verified from the existing project documentation, Git history, and current implementation before development begins.
 
-Do not assume Milestone 6 requirements without inspecting the repository.
+Do not assume Milestone 7 requirements without inspecting the repository.
 
 Planned scope:
 
-- Associate camera sources and queue regions with backend camera records.
-- Run the video observation pipeline without blocking the API.
-- Persist observations through the existing measurement service.
-- Broadcast queue and alert events through the existing publisher.
-- Add integration tests and operational documentation.
+- FastAPI WebSocket endpoint for live queue updates:
+  `/ws/queues`
+- WebSocket connection manager.
+- Configurable gradual multi-queue simulator.
+- Persist simulated measurements.
+- Live React frontend updates.
+- WebSocket reconnection handling.
+- Connection/status fallback when the live connection is unavailable.
+- Transition-based queue alerts.
+- Appropriate backend/frontend tests.
+- Documentation updates.
 
-Before implementing Milestone 6, inspect the repository and determine which parts, if any, already exist. Do not duplicate existing functionality.
+Before implementing Milestone 4, inspect the repository and determine which parts, if any, already exist. Do not duplicate existing functionality.
 
 ---
 
 ## 3. Primary Development Rule
 
-**Continue from the existing codebase. Do not restart or recreate Milestones 1–3.**
+**Continue from the existing codebase. Do not restart or recreate Milestones 1–6.**
 
 Before making changes:
 
@@ -57,7 +64,7 @@ Before making changes:
 4. Run `git status`.
 5. Inspect recent Git commits.
 6. Identify the current branch.
-7. Verify the actual implementation of Milestones 1–3.
+7. Verify the actual implementation of Milestones 1–6.
 8. Identify existing Milestone 4 work.
 9. Understand the architecture before modifying it.
 
@@ -508,12 +515,14 @@ Milestone 1 — Completed
 Milestone 2 — Completed
 Milestone 3 — Completed
 Milestone 4 — Completed
+Milestone 5 — Completed
+Milestone 6 — Completed
 ```
 
 ### Current
 
 ```text
-Milestone 6 — Camera Observation Integration
+Milestone 7 — Next Development Phase
 ```
 
 ### Known Issues
@@ -529,26 +538,81 @@ No issues documented here yet.
 Update this section as work progresses.
 
 ```text
-1. Configure camera-to-queue regions and video sources.
-2. Connect `QueueObservation` values to measurement persistence and WebSocket delivery.
-3. Add end-to-end integration and performance tests.
+1. Verify the completed Milestones 1–6 implementation.
+2. Inspect the repository documentation and Git history for Milestone 7 requirements.
+3. Audit any existing Milestone 7 work.
+4. Implement the next Milestone 7 task incrementally.
+5. Add/complete relevant tests.
+6. Verify frontend/backend/AI/database integration where applicable.
+7. Update documentation.
+8. Update this AGENTS.md.
+9. Commit and push the completed work.
 ```
 
 ---
 
-## 20. Milestone Completion
+## 20. Milestone 4 Completion
 
-Milestones 4 and 5 have been completed.
+Milestone 4 has been completed.
 
-The next Codex session must treat Milestones 1–5 as completed unless the repository reveals a verified defect or unfinished implementation.
+The next Codex session must treat Milestones 1–6 as completed unless the repository reveals a verified defect or unfinished implementation.
 
-Do not recreate completed milestone work.
+Do not recreate Milestone 4.
 
-Before beginning Milestone 6, inspect the actual codebase, tests, documentation, and Git history to determine the exact remaining scope.
+Before beginning Milestone 5, inspect the actual codebase, tests, documentation, and Git history to determine the exact remaining scope.
 
 ---
 
-## 21. Codex Session Handoff
+## 21. Milestone 6 Completion
+
+Milestone 6 has been completed and pushed to GitHub.
+
+Completed:
+
+- Added camera configuration and observation ingestion.
+- Added `POST /api/cameras/{id}/observations`.
+- The observation endpoint validates the camera.
+- Measurements are persisted.
+- Queue state is updated.
+- Live queue and alert events are broadcast.
+- Added camera assignment tests.
+- Added end-to-end WebSocket broadcast tests.
+
+Verification:
+
+- 30 backend/AI tests passed.
+- Frontend tests passed.
+- Frontend lint passed.
+
+Commit:
+
+```text
+e54ca001 feat: ingest camera queue observations
+```
+
+Important handoff note:
+
+The pre-existing uncommitted changes in `AGENTS.md` were intentionally preserved and were not part of the Milestone 6 commit.
+
+Do not discard or overwrite those changes without explicit instruction.
+
+The next development target is Milestone 7.
+
+---
+
+## 21. Milestone 5 Completion
+
+Milestone 5 has been completed.
+
+The next Codex session must treat Milestones 1–6 as completed unless the repository reveals a verified defect or unfinished implementation.
+
+Do not recreate Milestone 5.
+
+Milestone 6 has now been completed. Before beginning Milestone 7, inspect the actual codebase, tests, documentation, and Git history to determine the exact Milestone 7 requirements.
+
+---
+
+## 23. Codex Session Handoff
 
 At the end of every significant Codex session, update this file.
 
@@ -601,7 +665,7 @@ Do not claim something is complete unless it has been verified.
 
 ---
 
-## 22. New Codex Session Procedure
+## 24. New Codex Session Procedure
 
 Every new Codex session should:
 
@@ -612,9 +676,9 @@ Every new Codex session should:
 4. Run git status.
 5. Inspect the current branch.
 6. Inspect recent commits.
-7. Verify Milestones 1–5.
-8. Inspect current Milestone 6 implementation.
-9. Determine the exact Milestone 6 requirements from project documentation and Git history.
+7. Verify Milestones 1–6.
+8. Inspect current Milestone 7 implementation.
+9. Determine the exact Milestone 7 requirements from project documentation and Git history.
 10. Identify what remains.
 11. Implement only the required next step.
 12. Run relevant tests.
@@ -630,7 +694,7 @@ Never recreate completed milestones unless a verified bug requires it.
 
 ---
 
-## 23. Golden Rule
+## 25. Golden Rule
 
 The QueueFlow repository is the source of truth.
 
@@ -639,29 +703,3 @@ When continuing work:
 **Inspect → Understand → Modify → Test → Document → Commit → Push**
 
 Build on the existing implementation and preserve working functionality.
-
----
-
-## Session Handoff — 2026-09-01 (Milestone 5)
-
-### Completed
-
-- Added the AI video-file baseline: optional OpenCV HOG detection, centroid tracking, polygon queue regions, queue counting, and bounded density observations.
-- Added an injectable `VideoQueueAnalyzer`, keeping its output independent of backend persistence and WebSockets.
-
-### Tested
-
-- AI and backend: `backend/.venv/bin/python -m pytest ai/tests backend/tests` — 26 tests passed.
-- Frontend regression: `npm test -- --run` and `npm run lint`.
-
-### Remaining
-
-- Camera configuration, video-source execution, persistence, and live event delivery are Milestone 6 work.
-
-### Known Issues
-
-- The built-in HOG detector is a CPU-only baseline and is not a production-accuracy model.
-
-### Next Task
-
-Connect a configured camera source to `VideoQueueAnalyzer` and publish its observations through the existing measurement and real-time publisher interfaces.
