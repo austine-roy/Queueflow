@@ -26,18 +26,81 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 8 — COMPLETED & RUNTIME VERIFIED**
 - **Milestone 9 — COMPLETED & VERIFIED**
 - **Milestone 10 — COMPLETED & RUNTIME VERIFIED**
-- **Milestone 11 — COMPLETED & VERIFIED**
-- **Milestone 12 — NEXT**
+- **Milestone 11 — COMPLETED & RUNTIME VERIFIED**
+- **Milestone 12 — CURRENT / PERFORMANCE & RELIABILITY**
 
 **### Current Milestone**
 
-**Milestone 12 — Next Development Phase**
+**Milestone 12 — Performance & Reliability**
 
-Milestones 1–11 are complete and verified. Define Milestone 12 before implementation.
+Milestones 1–11 are complete and verified. Milestone 12 is now the performance and reliability phase.
 
-Milestone 11 handoff: added production headers/HSTS, configurable login throttling, least-privilege Compose restrictions, localhost-only PostgreSQL exposure, and PostgreSQL backup/recovery guidance. Verification passed: 46 backend/AI tests, 8 frontend tests, lint/build, dependency audit (two unresolved moderate React Router advisories requiring a breaking v7 upgrade), and fresh isolated Docker stacks verifying health/readiness/metrics, headers/HSTS, login throttling, structured logs, and authenticated/rejected WebSockets. Commit pending this handoff.
+The goal is to validate and improve QueueFlow's behavior under realistic load while preserving all completed functionality.
 
-The goal is to make QueueFlow easier to operate, diagnose, and monitor in production without disrupting the completed functionality from Milestones 1–10.
+Scope:
+
+1. **Performance baseline**
+   - Establish practical baselines for API latency, queue observation ingestion, analytics, WebSocket updates, and relevant AI operations.
+   - Identify the main performance bottlenecks before making optimizations.
+
+2. **API and backend performance**
+   - Profile important API paths.
+   - Optimize slow database queries and application code where evidence supports it.
+   - Avoid premature optimization.
+   - Preserve existing API behavior.
+
+3. **Database performance**
+   - Review query patterns and indexes.
+   - Identify inefficient queries and N+1 behavior where applicable.
+   - Add only justified indexes or query optimizations.
+   - Verify migrations remain safe and non-destructive.
+
+4. **WebSocket reliability and scalability**
+   - Test concurrent authenticated WebSocket connections.
+   - Test reconnect/disconnect behavior.
+   - Verify broadcasts remain reliable under multiple clients.
+   - Identify connection/resource leaks.
+   - Preserve WebSocket authentication and existing message behavior.
+
+5. **Queue observation and camera throughput**
+   - Test concurrent camera/observation ingestion.
+   - Measure processing latency and throughput.
+   - Identify bottlenecks in queue-state updates, persistence, and broadcasting.
+   - Verify the system handles realistic multi-camera activity.
+
+6. **AI/inference performance**
+   - Measure relevant AI inference latency and resource usage.
+   - Identify practical CPU/GPU and memory bottlenecks.
+   - Optimize only where supported by measurements.
+   - Preserve existing AI behavior and accuracy.
+
+7. **Resource and failure testing**
+   - Evaluate CPU and memory behavior under representative load.
+   - Test service recovery and graceful failure scenarios.
+   - Verify database-unavailable and WebSocket failure behavior.
+   - Check for resource leaks and unbounded in-memory state.
+
+8. **Performance testing**
+   - Add focused backend performance/load tests where appropriate.
+   - Add WebSocket concurrency tests.
+   - Add observation-ingestion throughput tests.
+   - Establish reasonable regression thresholds without making tests unnecessarily brittle.
+
+9. **Production Docker verification**
+   - Run a fresh production Compose stack.
+   - Verify performance-critical paths under representative load.
+   - Confirm health, readiness, metrics, logging, authentication, RBAC, and WebSocket behavior remain functional.
+   - Verify the stack recovers cleanly from appropriate controlled failures.
+
+10. **Documentation**
+   - Document performance baselines and significant optimizations.
+   - Document known capacity limits and bottlenecks.
+   - Document recommended production resource expectations where evidence supports them.
+   - Update README, deployment documentation, roadmap, and AGENTS.md.
+
+Do not introduce unnecessary infrastructure. Use measurements to guide optimization and preserve the existing production architecture.
+
+The goal is to make QueueFlow easier to operate, diagnose, and monitor in production without disrupting the completed functionality from Milestones 1–11.
 
 Scope:
 
@@ -86,7 +149,7 @@ Do not introduce unnecessary infrastructure. Inspect the existing deployment and
 
 **## 3. Primary Development Rule**
 
-**\*\*Continue from the existing codebase. Do not restart or recreate Milestones 1–10.\*\***
+**\*\*Continue from the existing codebase. Do not restart or recreate Milestones 1–11.\*\***
 
 Before making changes:
 
@@ -102,7 +165,7 @@ Before making changes:
 
 6\. Identify the current branch.
 
-7\. Verify the actual implementation of Milestones 1–10.
+7\. Verify the actual implementation of Milestones 1–11.
 
 8\. Determine the current milestone and remaining work from the repository roadmap and documentation.
 
@@ -728,13 +791,14 @@ Milestone 6 — Completed
 Milestone 7 — Completed
 Milestone 8 — Completed & Runtime Verified
 Milestone 9 — Completed & Verified
-Milestone 10 — Observability & Production Monitoring
+Milestone 10 — Completed & Runtime Verified
+Milestone 11 — Completed & Runtime Verified
 ```
 
 **### Current**
 
 ```text
-Milestone 10 — Observability & Production Monitoring
+Milestone 12 — Performance & Reliability
 ```
 
 **### Known Issues**
@@ -742,19 +806,20 @@ Milestone 10 — Observability & Production Monitoring
 Update this section with verified issues.
 
 ```text
-Frontend tests may emit existing React Router future-flag and zero-size chart warnings; they do not fail tests.
+Two moderate React Router dependency advisories remain. They require a breaking React Router v7 upgrade and were documented rather than applied unsafely.
 ```
 
 **### Next Steps**
 
 ```text
-1. Verify the completed Milestones 1–10 implementation.
-2. Inspect the existing authentication, API, Docker, database, and configuration security.
-3. Implement Milestone 11 security and production hardening incrementally.
-4. Add focused security tests and run the full verification suite.
-5. Perform production Docker/runtime verification.
-6. Update documentation and AGENTS.md.
-7. Commit and push the completed work.
+1. Verify the completed Milestones 1–11 implementation.
+2. Inspect the current API, database, WebSocket, observation, AI, and Docker architecture.
+3. Establish performance baselines before optimizing.
+4. Implement Milestone 12 performance and reliability improvements incrementally.
+5. Add focused load/concurrency/reliability tests.
+6. Perform production Docker verification under representative load.
+7. Update documentation and AGENTS.md.
+8. Commit and push the completed work.
 ```
 
 **---**
@@ -826,13 +891,32 @@ Completed and verified.
 - Updated README, backend documentation, deployment documentation, roadmap, and AGENTS.md.
 - Commit: `be7cdd56 feat: add authentication and role-based access control`
 
+### Milestone 11 — Security & Production Hardening
+
+Completed and runtime verified.
+
+- Security headers and production HSTS.
+- Configurable login rate limiting with `429` / `Retry-After`.
+- Least-privilege Compose hardening and localhost-only PostgreSQL.
+- Backup/restore documentation.
+- Focused security tests.
+- Fresh Docker verification for health, readiness, metrics, headers, logs, rate limiting, and WebSockets.
+- Backend/AI: 46 passed.
+- Frontend: 8 passed; lint/build passed.
+- Two moderate React Router advisories remain and were documented because resolving them requires a breaking v7 upgrade.
+- Commit: `fc941999 feat: harden production security`
+
+### Milestone 12 — Performance & Reliability
+
+Current milestone. Implement only the approved scope above after inspecting the actual codebase and establishing performance baselines.
+
 ### Milestone 10 — Observability & Production Monitoring
 
 Milestone 10 is defined as the production observability and monitoring phase.
 
 Implement structured logging, health/readiness monitoring, useful operational metrics, production monitoring/troubleshooting support, error visibility, deployment observability, relevant tests, and documentation.
 
-Do not introduce unnecessary infrastructure. Preserve the completed Milestones 1–10.
+Do not introduce unnecessary infrastructure. Preserve the completed Milestones 1–11.
 
 ---
 
@@ -864,16 +948,17 @@ Every new Codex session should:
 4. Run git status.
 5. Inspect the current branch.
 6. Inspect recent commits.
-7. Verify Milestones 1–10 against the actual codebase.
-8. Inspect the roadmap and current security/deployment implementation for Milestone 11.
-9. Confirm the Milestone 11 scope: Security & Production Hardening.
-10. Present a concise implementation plan based on the actual codebase before major changes.
-11. Implement only the approved Milestone 11 scope.
-12. Run relevant tests and verification, including Docker smoke testing when available.
-13. Update documentation.
-14. Update AGENTS.md.
-15. Commit changes.
-16. Push to GitHub when appropriate.
+7. Verify Milestones 1–11 against the actual codebase.
+8. Inspect the roadmap and current API, database, WebSocket, observation, AI, and Docker implementation for Milestone 12.
+9. Confirm the Milestone 12 scope: Performance & Reliability.
+10. Establish performance baselines before making optimizations.
+11. Present a concise implementation plan based on measured bottlenecks and the actual codebase.
+12. Implement only the approved Milestone 12 scope.
+13. Run relevant tests and verification, including representative-load Docker testing when available.
+14. Update documentation.
+15. Update AGENTS.md.
+16. Commit changes.
+17. Push to GitHub when appropriate.
 ```
 
 Never restart the project.
