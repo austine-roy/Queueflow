@@ -62,3 +62,5 @@ The current work plan is in [docs/development/roadmap.md](docs/development/roadm
 Milestone 10 — Observability and production monitoring verified. The backend provides structured JSON logs, liveness (`/api/health`), PostgreSQL readiness (`/api/ready`), and Prometheus-compatible metrics (`/api/metrics`); see the infrastructure runbook for production checks.
 
 Milestone 11 — Security hardening adds production HTTP security headers, HSTS, login rate limiting, least-privilege Compose settings, and PostgreSQL recovery guidance. See the deployment runbook for configuration and backup procedures.
+
+Milestone 12 — Performance and reliability adds an index-backed SQL history window for analytics, a 20-client WebSocket reliability baseline, and a 20-observation ingestion baseline. These are regression baselines, not production capacity guarantees.

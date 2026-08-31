@@ -27,13 +27,16 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 9 — COMPLETED & VERIFIED**
 - **Milestone 10 — COMPLETED & RUNTIME VERIFIED**
 - **Milestone 11 — COMPLETED & RUNTIME VERIFIED**
-- **Milestone 12 — CURRENT / PERFORMANCE & RELIABILITY**
+- **Milestone 12 — COMPLETED & VERIFIED**
+- **Milestone 13 — NEXT**
 
 **### Current Milestone**
 
-**Milestone 12 — Performance & Reliability**
+**Milestone 13 — Next Development Phase**
 
-Milestones 1–11 are complete and verified. Milestone 12 is now the performance and reliability phase.
+Milestones 1–12 are complete and verified. Define Milestone 13 before implementation.
+
+Milestone 12 handoff: analytics now limits per-queue history in PostgreSQL with a window query and preserves all-time counts; the safe composite measurement-history index was migrated. Baselines passed: 500 wait-estimation calls under one second, 20 WebSocket clients broadcast/disconnect without leaks, and 20 camera observations persisted with the final queue projection intact. Verification: 50 backend/AI tests; 8 frontend tests, lint, and production build passed; fresh Compose stacks applied migration `20260902_0003`, verified health/readiness/metrics, seeded analytics, admin authentication, and three simultaneous authenticated WebSockets. Known limits: the test baselines are single-process regression checks, not production capacity guarantees. Commit pending this handoff.
 
 The goal is to validate and improve QueueFlow's behavior under realistic load while preserving all completed functionality.
 

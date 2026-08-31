@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, Enum as SQLEnum, Float, ForeignKey, Integer, func
+from sqlalchemy import DateTime, Enum as SQLEnum, Float, ForeignKey, Index, Integer, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -11,6 +11,7 @@ from app.models.enums import QueueStatus
 
 class QueueMeasurement(Base):
     __tablename__ = "queue_measurements"
+    __table_args__ = (Index("ix_queue_measurements_queue_recorded", "queue_id", "recorded_at", "id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     queue_id: Mapped[int] = mapped_column(ForeignKey("queues.id", ondelete="CASCADE"), nullable=False, index=True)

@@ -53,3 +53,9 @@
 - [x] Add safe structured JSON request, authentication, camera, and WebSocket logs.
 - [x] Add liveness, PostgreSQL readiness, and Prometheus-compatible in-process metrics.
 - [x] Verify the production Compose stack, health/readiness, metrics, and request ID logging.
+
+## Milestone 12 — Performance & reliability
+
+- [x] Add an index-backed SQL window query for limited per-queue analytics history while preserving total counts.
+- [x] Verify a 20-client WebSocket broadcast/disconnect baseline and a 20-observation persistence baseline.
+- [x] Verify the migration and authenticated multi-client behavior in a fresh production Compose stack.

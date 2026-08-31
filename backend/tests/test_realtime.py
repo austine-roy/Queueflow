@@ -59,6 +59,18 @@ def test_connection_manager_removes_failed_client() -> None:
     assert healthy.events == [{"type": "queue_update"}]
 
 
+def test_connection_manager_handles_many_clients_without_leaks() -> None:
+    websocket_manager = WebSocketManager()
+    clients = [FakeSocket() for _ in range(20)]
+    for client in clients:
+        asyncio.run(websocket_manager.connect(client))
+    asyncio.run(websocket_manager.broadcast({"type": "queue_update"}))
+    assert all(client.events == [{"type": "queue_update"}] for client in clients)
+    for client in clients:
+        websocket_manager.disconnect(client)
+    assert websocket_manager.active_connections == []
+
+
 def test_websocket_endpoint_connects_and_disconnects(client: TestClient) -> None:
     token = create_access_token(1, UserRole.ADMIN, get_settings())
     with client.websocket_connect("/ws/queues", subprotocols=[f"queueflow.jwt.{token}"]) as websocket:

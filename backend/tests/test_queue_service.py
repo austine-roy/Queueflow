@@ -1,6 +1,7 @@
 """Unit tests for reusable queue rules."""
 
 import pytest
+import time
 from datetime import datetime, timedelta
 
 from app.core.config import Settings
@@ -45,3 +46,12 @@ def test_historical_wait_falls_back_without_a_departure_signal() -> None:
     start = datetime(2026, 9, 1, 9, 0)
     observations = [(start, 2), (start + timedelta(minutes=5), 4)]
     assert estimate_wait_from_history(4, 2, observations) == 2
+
+
+def test_historical_wait_baseline() -> None:
+    """Keep the pure queue-estimation hot path comfortably sub-second."""
+    started = time.perf_counter()
+    history = [(datetime(2026, 9, 1, 9, 0), 10)]
+    for count in range(500):
+        estimate_wait_from_history(count % 100, 12, history)
+    assert time.perf_counter() - started < 1.0

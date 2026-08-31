@@ -2,6 +2,7 @@
 
 import json
 import logging
+import time
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
@@ -132,6 +133,20 @@ def test_camera_configuration_and_observation_ingestion(client: TestClient, sess
     assert len(client.get(f"/api/queues/{queue['id']}/measurements").json()) == 1
 
 
+def test_observation_ingestion_baseline_preserves_every_measurement(client: TestClient, session: Session) -> None:
+    """A controlled single-worker baseline; production workers submit independently."""
+    location = create_location(session)
+    queue = client.post("/api/queues", json={"name": "Throughput", "location_id": location.id, "capacity": 100}).json()
+    camera = client.post("/api/cameras", json={"name": "Throughput camera", "location_id": location.id, "queue_id": queue["id"], "source_type": "VIDEO_FILE"}).json()
+    started = time.perf_counter()
+    for count in range(20):
+        assert client.post(f"/api/cameras/{camera['id']}/observations", json={"person_count": count, "density": 0.1}).status_code == 200
+    elapsed = time.perf_counter() - started
+    assert len(client.get(f"/api/queues/{queue['id']}/measurements").json()) == 20
+    assert client.get(f"/api/queues/{queue['id']}").json()["current_count"] == 19
+    assert elapsed < 5.0
+
+
 def test_camera_observation_requires_active_queue_assignment(client: TestClient, session: Session) -> None:
     location = create_location(session)
     camera = client.post("/api/cameras", json={"name": "Unassigned", "location_id": location.id, "source_type": "VIDEO_FILE"}).json()
@@ -183,6 +198,17 @@ def test_analytics_returns_persisted_history(client: TestClient, session: Sessio
     assert analytics["measurement_count"] == 2
     assert analytics["peak_person_count"] == 8
     assert len(analytics["measurements"]) == 2
+
+
+def test_analytics_limits_history_in_database_while_preserving_total_count(client: TestClient, session: Session) -> None:
+    location = create_location(session)
+    queue = client.post("/api/queues", json={"name": "History", "location_id": location.id, "capacity": 100}).json()
+    for count in range(6):
+        assert client.post(f"/api/queues/{queue['id']}/measurements", json={"person_count": count, "density": 0.1}).status_code == 201
+    analytics = client.get("/api/analytics/queues?measurement_limit=2").json()[0]
+    assert analytics["measurement_count"] == 6
+    assert len(analytics["measurements"]) == 2
+    assert [item["person_count"] for item in analytics["measurements"]] == [4, 5]
 
 
 def test_camera_list_can_filter_by_queue_and_active_state(client: TestClient, session: Session) -> None:
