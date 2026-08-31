@@ -29,7 +29,7 @@ The exact implementation of completed milestones must always be verified against
 
 ### Current Milestone
 
-**Milestone 8 — Deployment and Production Verification**
+**Milestone 8 — Next Development Phase**
 
 The exact scope of Milestone 8 must be verified from the existing project documentation, Git history, and current implementation before development begins.
 
@@ -37,18 +37,25 @@ Do not assume Milestone 8 requirements without inspecting the repository.
 
 Planned scope:
 
-- Production Docker Compose services and environment configuration.
-- Health checks, startup verification, and deployment documentation.
-- Secure production defaults for CORS, secrets, and optional simulation.
-- End-to-end verification of database, API, dashboard, and real-time delivery.
+- FastAPI WebSocket endpoint for live queue updates:
+  `/ws/queues`
+- WebSocket connection manager.
+- Configurable gradual multi-queue simulator.
+- Persist simulated measurements.
+- Live React frontend updates.
+- WebSocket reconnection handling.
+- Connection/status fallback when the live connection is unavailable.
+- Transition-based queue alerts.
+- Appropriate backend/frontend tests.
+- Documentation updates.
 
-Before implementing Milestone 8, inspect the repository and determine which parts, if any, already exist. Do not duplicate existing functionality.
+Before implementing Milestone 4, inspect the repository and determine which parts, if any, already exist. Do not duplicate existing functionality.
 
 ---
 
 ## 3. Primary Development Rule
 
-**Continue from the existing codebase. Do not restart or recreate Milestones 1–6.**
+**Continue from the existing codebase. Do not restart or recreate Milestones 1–7.**
 
 Before making changes:
 
@@ -58,7 +65,7 @@ Before making changes:
 4. Run `git status`.
 5. Inspect recent Git commits.
 6. Identify the current branch.
-7. Verify the actual implementation of Milestones 1–6.
+7. Verify the actual implementation of Milestones 1–7.
 8. Identify existing Milestone 4 work.
 9. Understand the architecture before modifying it.
 
@@ -517,7 +524,7 @@ Milestone 7 — Completed
 ### Current
 
 ```text
-Milestone 8 — Deployment and Production Verification
+Milestone 8 — Next Development Phase
 ```
 
 ### Known Issues
@@ -534,9 +541,14 @@ Update this section as work progresses.
 
 ```text
 1. Verify the completed Milestones 1–7 implementation.
-2. Inspect existing infrastructure and deployment configuration.
-3. Add production-safe Compose configuration and health checks.
-4. Run end-to-end deployment verification.
+2. Inspect the repository documentation and Git history for Milestone 8 requirements.
+3. Audit any existing Milestone 8 work.
+4. Implement the next Milestone 8 task incrementally.
+5. Add/complete relevant tests.
+6. Verify frontend/backend/AI/database integration where applicable.
+7. Update documentation.
+8. Update this AGENTS.md.
+9. Commit and push the completed work.
 ```
 
 ---
@@ -545,32 +557,11 @@ Update this section as work progresses.
 
 Milestone 4 has been completed.
 
-The next Codex session must treat Milestones 1–6 as completed unless the repository reveals a verified defect or unfinished implementation.
+The next Codex session must treat Milestones 1–7 as completed unless the repository reveals a verified defect or unfinished implementation.
 
 Do not recreate Milestone 4.
 
 Before beginning Milestone 5, inspect the actual codebase, tests, documentation, and Git history to determine the exact remaining scope.
-
----
-
-## 22. Milestone 7 Completion
-
-Milestone 7 has been completed.
-
-Completed:
-
-- Added server-side queue-history analytics, alert lifecycle filters/resolution, and multi-camera filtering.
-- Added history-informed wait estimates with a configured service-rate fallback.
-- Updated the dashboard to use the consolidated analytics endpoint.
-
-Tested:
-
-- Backend and AI: 36 tests passed.
-- Frontend tests, lint, and production build passed.
-
-Next Task:
-
-Implement Milestone 8 deployment configuration and production verification.
 
 ---
 
@@ -615,11 +606,45 @@ The next development target is Milestone 7.
 
 Milestone 5 has been completed.
 
-The next Codex session must treat Milestones 1–6 as completed unless the repository reveals a verified defect or unfinished implementation.
+The next Codex session must treat Milestones 1–7 as completed unless the repository reveals a verified defect or unfinished implementation.
 
 Do not recreate Milestone 5.
 
-Milestone 6 has now been completed. Before beginning Milestone 7, inspect the actual codebase, tests, documentation, and Git history to determine the exact Milestone 7 requirements.
+Milestone 6 has now been completed. Before beginning Milestone 7, inspect the actual codebase, tests, documentation, and Git history to determine the exact Milestone 8 requirements.
+
+---
+
+## 23. Milestone 7 Completion
+
+Milestone 7 has been completed and pushed to GitHub.
+
+Completed:
+
+- Added server-side historical analytics.
+- Updated the dashboard to use server-side historical analytics.
+- Added alert filtering.
+- Added alert resolution.
+- Added automatic recovery resolution for alerts.
+- Added multi-camera operational filters.
+- Improved wait-time estimates using observed queue-departure history.
+- Added a safe configured fallback for wait-time estimation when sufficient observed history is unavailable.
+
+Verification:
+
+- 36 backend/AI tests passed.
+- Frontend tests passed.
+- Frontend lint passed.
+- Production frontend build passed.
+
+Commit:
+
+```text
+5c440a05 feat: add advanced queue operations
+```
+
+The next development target is Milestone 8.
+
+Do not recreate Milestone 7 unless a verified defect requires changes.
 
 ---
 
@@ -687,9 +712,9 @@ Every new Codex session should:
 4. Run git status.
 5. Inspect the current branch.
 6. Inspect recent commits.
-7. Verify Milestones 1–6.
-8. Inspect current Milestone 7 implementation.
-9. Determine the exact Milestone 7 requirements from project documentation and Git history.
+7. Verify Milestones 1–7.
+8. Inspect current Milestone 8 implementation.
+9. Determine the exact Milestone 8 requirements from project documentation and Git history.
 10. Identify what remains.
 11. Implement only the required next step.
 12. Run relevant tests.
