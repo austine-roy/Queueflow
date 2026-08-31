@@ -8,208 +8,398 @@
 
 QueueFlow is an AI-based smart queue monitoring and management system designed to monitor queues, estimate queue conditions, assist with queue management, and provide useful information to users and administrators.
 
-The project should be developed as a production-oriented application with a clean architecture, maintainable code, and clear separation between frontend, backend, AI/ML, database, and supporting services where applicable.
+This is an existing project. Continue development incrementally. Do not recreate the project from scratch.
 
 ---
 
-## 2. Primary Development Rule
+## 2. Current Project Status
 
-**Continue from the existing codebase. Do not recreate the project from scratch.**
+### Milestone Progress
+
+- **Milestone 1 — COMPLETED**
+- **Milestone 2 — COMPLETED**
+- **Milestone 3 — COMPLETED**
+- **Milestone 4 — CURRENT / NEXT DEVELOPMENT TARGET**
+
+The exact implementation of completed milestones must always be verified against the actual codebase rather than assumed from this document.
+
+### Current Milestone
+
+**Milestone 4 — Real-Time Queue Layer**
+
+Planned scope:
+
+- FastAPI WebSocket endpoint for live queue updates:
+  `/ws/queues`
+- WebSocket connection manager.
+- Configurable gradual multi-queue simulator.
+- Persist simulated measurements.
+- Live React frontend updates.
+- WebSocket reconnection handling.
+- Connection/status fallback when the live connection is unavailable.
+- Transition-based queue alerts.
+- Appropriate backend/frontend tests.
+- Documentation updates.
+
+Before implementing Milestone 4, inspect the repository and determine which parts, if any, already exist. Do not duplicate existing functionality.
+
+---
+
+## 3. Primary Development Rule
+
+**Continue from the existing codebase. Do not restart or recreate Milestones 1–3.**
 
 Before making changes:
 
-1. Inspect the repository structure.
-2. Read this `AGENTS.md`.
-3. Read the `README.md` if available.
-4. Inspect `git status`.
-5. Inspect recent commits.
-6. Identify the existing technologies and architecture.
-7. Understand the implementation before modifying it.
+1. Read this `AGENTS.md`.
+2. Read `README.md` and relevant documentation.
+3. Inspect the repository structure.
+4. Run `git status`.
+5. Inspect recent Git commits.
+6. Identify the current branch.
+7. Verify the actual implementation of Milestones 1–3.
+8. Identify existing Milestone 4 work.
+9. Understand the architecture before modifying it.
 
-Preserve existing working functionality unless there is a clear reason to change it.
+Preserve existing working functionality unless there is a clear technical reason to change it.
 
 ---
 
-## 3. Git Workflow
+## 4. Git Repository and Workflow
 
-The main GitHub repository is:
+Repository:
 
 `https://github.com/austine-roy/queueflow`
 
-Before starting substantial work:
+Useful commands:
 
 ```bash
 git status
 git branch
 git log --oneline -10
+git remote -v
 ```
 
-Before making a commit:
+Before committing:
 
 ```bash
 git status
+git diff
 ```
 
-Use clear commit messages, for example:
+Use clear commit messages:
 
 ```text
-feat: add queue monitoring dashboard
-fix: resolve queue detection issue
+feat: add real-time queue updates
+fix: resolve websocket reconnection issue
 refactor: improve queue service
-docs: update project documentation
+test: add websocket integration tests
+docs: update milestone 4 documentation
 ```
 
 Do not commit:
 
-* API keys
-* passwords
-* authentication tokens
-* `.env` files containing secrets
-* private credentials
-* large generated files
-* unnecessary build/cache directories
+- API keys
+- passwords
+- authentication tokens
+- secrets
+- `.env` files containing secrets
+- private credentials
+- unnecessary build/cache files
+- large generated artifacts
 
 Always check `.gitignore` before committing.
 
 ---
 
-## 4. Development Principles
+## 5. Development Workflow
 
-Follow these principles throughout the project:
+Follow:
 
-### Code Quality
+**Inspect → Understand → Modify → Test → Document → Commit → Push**
 
-* Keep code readable and maintainable.
-* Prefer simple solutions over unnecessary complexity.
-* Avoid duplicated logic.
-* Use meaningful variable, function, class, and component names.
-* Keep functions focused on a single responsibility.
-* Do not introduce dependencies without a reason.
-* Follow the conventions already established in the repository.
+Do not make broad changes without first understanding the existing implementation.
 
-### Existing Architecture
+For every feature:
+
+1. Inspect related files.
+2. Identify existing abstractions.
+3. Reuse existing components where appropriate.
+4. Implement the smallest maintainable change.
+5. Run relevant tests.
+6. Check for regressions.
+7. Update documentation when necessary.
+8. Update this file if project state changes.
+
+---
+
+## 6. Architecture Rules
 
 Do not replace the existing architecture simply because another technology or structure may be preferable.
 
-If an architectural change is necessary:
+Before making architectural changes:
 
-1. Explain why it is needed.
+1. Explain why the change is necessary.
 2. Identify affected components.
-3. Make the smallest reasonable change.
-4. Test the affected functionality.
+3. Consider compatibility with existing functionality.
+4. Make the smallest reasonable change.
+5. Test the affected components.
+
+Keep concerns separated where practical:
+
+- Frontend/UI
+- Backend/API
+- Queue/business logic
+- AI/ML
+- Database/persistence
+- Real-time communication
+- Configuration
+- Tests
+
+Follow the architecture already present in the repository.
 
 ---
 
-## 5. Working With AI/ML Components
+## 7. Milestone 1–3 Continuity
 
-QueueFlow may contain AI/ML components for queue monitoring and analysis.
+Milestones 1, 2, and 3 were completed in the previous development sessions.
 
-When working on AI/ML functionality:
+**Do not assume their exact contents without verification.**
 
-* Inspect the existing implementation before changing models.
-* Do not replace an existing model without understanding why it was selected.
-* Keep model inference separate from UI code where practical.
-* Avoid hardcoding model paths or machine-specific paths.
-* Make configuration environment-based where appropriate.
-* Handle missing models and inference failures gracefully.
-* Avoid unnecessary CPU/GPU intensive processing.
-* Consider performance and latency for real-time queue monitoring.
+A new Codex session must inspect:
 
-When optimizing AI functionality, consider:
+- Git history
+- Existing source files
+- README/documentation
+- Tests
+- Configuration
+- Database models
+- Frontend components
+- Backend routes/services
 
-* inference speed
-* memory usage
-* detection accuracy
-* frame processing rate
-* CPU/GPU utilization
-* scalability
-* reliability
+The repository is the source of truth.
+
+If documentation and code disagree, verify the implementation and update the documentation.
 
 ---
 
-## 6. Queue Monitoring
+## 8. Milestone 4 — Real-Time Queue Layer
 
-The core purpose of QueueFlow is queue monitoring and management.
+Milestone 4 is the current development target.
 
-Queue-related functionality should consider:
+### 8.1 WebSocket Backend
 
-* number of people in a queue
-* queue length
-* waiting time estimation
-* queue status
-* service counters
-* queue changes over time
-* user notifications where implemented
-* administrator monitoring
-* historical queue information where implemented
+Implement or verify a FastAPI WebSocket endpoint:
 
-Do not assume a feature already exists. Inspect the codebase first.
+```text
+/ws/queues
+```
+
+Requirements:
+
+- Manage WebSocket connections safely.
+- Support multiple connected clients where appropriate.
+- Broadcast queue updates.
+- Handle client disconnects.
+- Avoid crashing the server when a connection closes unexpectedly.
+- Keep real-time communication separate from unrelated business logic.
+
+Use existing backend patterns whenever possible.
+
+### 8.2 Connection Manager
+
+If not already implemented, create a reusable WebSocket connection manager responsible for:
+
+- accepting connections
+- tracking active clients
+- removing disconnected clients
+- broadcasting updates
+- handling connection failures
+
+Do not create duplicate connection-management implementations.
+
+### 8.3 Multi-Queue Simulator
+
+Implement or verify a configurable simulator capable of generating gradual queue changes for multiple queues.
+
+The simulator should:
+
+- support multiple queues
+- generate realistic gradual changes
+- avoid unrealistic random jumps unless intentionally configured
+- use configurable intervals/settings
+- integrate with existing queue models/services
+- be easy to replace with real AI-generated measurements later
+
+The simulator is for development/testing and must remain clearly separated from production AI inference.
+
+### 8.4 Persist Measurements
+
+Queue measurements generated by the simulator should be persisted using the project's existing database/data layer where applicable.
+
+Before changing the schema:
+
+1. Inspect existing models.
+2. Check existing migrations.
+3. Reuse existing measurement structures if possible.
+4. Avoid destructive schema changes.
+
+### 8.5 React Live Updates
+
+The frontend should consume WebSocket updates and update queue information without requiring a full page refresh.
+
+Handle:
+
+- initial connection
+- incoming queue measurements
+- multiple queues
+- connection status
+- disconnection
+- reconnection
+- stale/unavailable data
+
+Follow the existing React/component architecture.
+
+### 8.6 Reconnection and Fallback
+
+The frontend must behave gracefully if the WebSocket connection fails.
+
+Expected behavior:
+
+- detect disconnection
+- attempt reconnection according to a reasonable strategy
+- avoid excessive reconnect loops
+- show connection status where appropriate
+- retain sensible last-known data when appropriate
+- fall back to an existing HTTP/API mechanism if the project architecture supports it
+
+Do not hide connection failures from the user or silently produce misleading live data.
+
+### 8.7 Queue Transition Alerts
+
+Implement alerts based on meaningful queue-state transitions rather than repeatedly alerting on every measurement.
+
+Examples may include:
+
+- queue becomes crowded
+- queue returns to normal
+- waiting time crosses a configured threshold
+- queue status changes
+
+Avoid alert spam.
+
+Use existing notification/alert infrastructure if available.
 
 ---
 
-## 7. Frontend Development
+## 9. AI/ML Development
+
+QueueFlow may use AI/ML for queue monitoring and analysis.
+
+When working with AI/ML:
+
+- Inspect the current implementation first.
+- Do not replace models without understanding the reason.
+- Keep inference logic separate from UI code.
+- Avoid hardcoded machine-specific model paths.
+- Use configuration/environment variables where appropriate.
+- Handle missing models gracefully.
+- Consider CPU/GPU usage and inference latency.
+- Keep real-time processing efficient.
+
+Important performance considerations:
+
+- inference speed
+- memory usage
+- detection accuracy
+- frame rate
+- CPU/GPU utilization
+- latency
+- scalability
+- reliability
+
+---
+
+## 10. Frontend Development
 
 When modifying the frontend:
 
-* Follow the existing UI framework and component structure.
-* Reuse existing components where possible.
-* Keep components modular.
-* Avoid putting business logic unnecessarily inside presentation components.
-* Maintain responsive design.
-* Handle loading, empty, and error states.
-* Keep API calls organized according to the existing project structure.
-* Do not introduce a new frontend framework unless explicitly required.
+- Follow the existing framework and component structure.
+- Reuse components.
+- Keep components modular.
+- Avoid unnecessary business logic inside UI components.
+- Maintain responsive design.
+- Handle loading states.
+- Handle empty states.
+- Handle errors.
+- Handle real-time connection states.
+- Follow the existing API/data-fetching approach.
+
+Do not introduce a new frontend framework without explicit justification.
 
 ---
 
-## 8. Backend Development
+## 11. Backend Development
 
 When modifying the backend:
 
-* Follow the existing API architecture.
-* Keep business logic separate from routing/controllers where practical.
-* Validate user input.
-* Handle errors consistently.
-* Avoid exposing sensitive information.
-* Keep database operations organized.
-* Use asynchronous operations where appropriate.
-* Maintain backward compatibility with existing frontend/API consumers when possible.
+- Follow the existing API architecture.
+- Keep business logic separate from routes/controllers where practical.
+- Validate inputs.
+- Handle errors consistently.
+- Avoid exposing sensitive information.
+- Reuse existing services.
+- Preserve API compatibility when possible.
+- Use asynchronous operations where appropriate.
 
 ---
 
-## 9. Database
+## 12. Database
 
-When working with the database:
+Before modifying database structures:
 
-1. Inspect the existing schema/models first.
-2. Do not delete existing data or tables without explicit approval.
-3. Use migrations if the project already uses migrations.
-4. Keep database configuration outside source code when appropriate.
-5. Avoid hardcoded credentials.
-6. Test schema changes against the existing application.
+1. Inspect existing models.
+2. Inspect migrations.
+3. Understand relationships.
+4. Avoid destructive changes.
+5. Preserve existing data.
+6. Test migrations.
+7. Update documentation if required.
 
----
-
-## 10. APIs
-
-Before modifying or creating an API:
-
-* Inspect existing endpoints.
-* Follow existing naming conventions.
-* Follow the existing request/response format.
-* Validate inputs.
-* Return useful error responses.
-* Avoid breaking existing clients.
-
-Document new APIs when appropriate.
+Never hardcode database credentials.
 
 ---
 
-## 11. Environment Configuration
+## 13. APIs and WebSockets
 
-Environment-specific values should not be hardcoded.
+Before adding an API or WebSocket feature:
 
-Examples include:
+- Inspect existing endpoints.
+- Follow established naming conventions.
+- Follow existing request/response formats.
+- Validate inputs.
+- Return useful errors.
+- Avoid breaking existing consumers.
+- Document new endpoints where appropriate.
+
+For WebSockets, also consider:
+
+- connection lifecycle
+- disconnect handling
+- reconnect behavior
+- message format
+- validation
+- multiple clients
+- server-side exceptions
+- stale connections
+
+---
+
+## 14. Environment Configuration
+
+Do not hardcode environment-specific values.
+
+Examples:
 
 ```text
 DATABASE_URL
@@ -220,152 +410,161 @@ PORT
 SECRET_KEY
 ```
 
-Use the project's existing environment/configuration mechanism.
+Use the project's existing configuration system.
 
-If an `.env.example` file exists, update it when adding new required environment variables.
+If `.env.example` exists, update it when adding required variables.
 
-Never commit actual secrets.
+Never commit real secrets.
 
 ---
 
-## 12. Testing
+## 15. Testing
 
-Before considering a feature complete:
+Before marking a feature complete:
 
-1. Run the existing tests.
+1. Run existing tests.
 2. Test the changed functionality.
-3. Check for obvious regressions.
-4. Check logs/errors.
-5. Verify the application starts successfully.
+3. Check for regressions.
+4. Check server logs.
+5. Verify the application starts.
+6. Verify frontend behavior where applicable.
 
-Use the project's existing testing framework.
+For Milestone 4, test at minimum:
+
+- WebSocket connection
+- WebSocket disconnect
+- WebSocket reconnection
+- queue update broadcasting
+- multiple queues
+- simulator behavior
+- measurement persistence
+- frontend live updates
+- fallback behavior
+- transition alerts
 
 Do not remove or disable tests simply because they fail after a change.
 
-If a test fails:
-
-* determine the cause
-* fix the implementation when appropriate
-* update the test only when the expected behavior has genuinely changed
-
 ---
 
-## 13. Debugging
+## 16. Debugging
 
-When encountering an error:
+When an error occurs:
 
-1. Read the complete error message.
-2. Identify the originating file/function.
+1. Read the complete error.
+2. Identify the source file/function.
 3. Inspect related code.
-4. Reproduce the problem if possible.
+4. Reproduce the problem.
 5. Make the smallest appropriate fix.
 6. Test the fix.
+7. Check for regressions.
 
-Do not blindly modify multiple unrelated files.
-
-Avoid temporary hacks unless they are clearly marked and necessary.
+Do not blindly modify unrelated files.
 
 ---
 
-## 14. Dependency Management
+## 17. Dependencies
 
 Before adding a dependency:
 
-* Check whether the functionality already exists in the project.
-* Check existing dependencies.
-* Prefer established and maintained packages.
-* Avoid adding multiple packages for the same purpose.
-* Use the project's existing package manager.
+- Check whether the functionality already exists.
+- Check current dependencies.
+- Prefer maintained packages.
+- Avoid duplicate packages.
+- Use the existing package manager.
 
-After adding a dependency, update the appropriate lockfile.
-
----
-
-## 15. Documentation
-
-Keep documentation updated when significant functionality changes.
-
-Important documentation should include:
-
-* project setup
-* installation
-* environment variables
-* running the application
-* architecture
-* API usage
-* AI/ML setup
-* database setup
-* deployment instructions where applicable
-
-Do not write documentation that claims functionality exists unless it has been verified in the codebase.
+Update the lockfile when appropriate.
 
 ---
 
-## 16. Current Project State
+## 18. Documentation
 
-**Important:** This section should be updated whenever a major feature is completed.
+Keep documentation synchronized with the implementation.
+
+Update documentation when significant functionality changes, especially:
+
+- setup instructions
+- environment variables
+- architecture
+- API endpoints
+- WebSocket endpoints
+- AI/ML setup
+- database setup
+- simulator configuration
+- testing
+- deployment
+
+Never document functionality that has not been verified.
+
+---
+
+## 19. Project State Tracking
+
+Update this section after major development sessions.
 
 ### Completed
 
-* Initial QueueFlow repository created.
-* Project code is being maintained in GitHub.
-* Repository: `austine-roy/queueflow`
+```text
+Milestone 1 — Completed
+Milestone 2 — Completed
+Milestone 3 — Completed
+```
 
-### Currently Working On
-
-Update this section with the current task.
-
-Example:
+### Current
 
 ```text
-Currently working on:
-- Queue detection
-- Dashboard integration
-- Backend API integration
+Milestone 4 — Real-Time Queue Layer
 ```
 
 ### Known Issues
 
-Update this section whenever an important issue is discovered.
+Update this section with verified issues.
 
 ```text
-No known issues documented yet.
+No issues documented here yet.
 ```
 
 ### Next Steps
 
-Update this section at the end of significant development sessions.
+Update this section as work progresses.
 
 ```text
-1. Inspect current implementation.
-2. Identify incomplete functionality.
-3. Continue the highest-priority feature.
-4. Test changes.
-5. Commit and push changes.
-6. Update AGENTS.md.
+1. Verify the completed Milestone 1–3 implementation.
+2. Audit existing Milestone 4 work.
+3. Implement missing real-time queue functionality.
+4. Add/complete tests.
+5. Verify frontend and backend integration.
+6. Update documentation.
+7. Update this AGENTS.md.
+8. Commit and push the completed work.
 ```
 
 ---
 
-## 17. Codex Session Handoff
+## 20. Codex Session Handoff
 
-At the end of a significant Codex session, update this file with:
+At the end of every significant Codex session, update this file.
 
-### What was changed
+Record:
 
-List the features, files, and important modifications.
+### Completed
 
-### What works
+What was implemented.
 
-List functionality that has been tested successfully.
+### Tested
 
-### What remains
+What was actually tested successfully.
 
-List unfinished features and known problems.
+### Remaining
 
-### Next recommended task
+What is unfinished.
 
-Clearly state what the next Codex session should work on.
+### Known Issues
+
+Any verified bugs or limitations.
+
+### Next Task
+
+The exact next recommended task.
 
 Example:
 
@@ -373,58 +572,61 @@ Example:
 Session Handoff
 
 Completed:
-- Implemented queue detection API.
-- Added queue status endpoint.
-- Connected dashboard to backend.
+- Implemented /ws/queues.
+- Added WebSocket connection manager.
+- Added multi-queue simulator.
 
 Tested:
-- Backend starts successfully.
-- Queue API returns expected response.
+- WebSocket connection/disconnection.
+- Multiple clients.
+- Queue update broadcast.
 
 Remaining:
-- Improve waiting-time estimation.
-- Add error handling to dashboard.
-- Add historical queue statistics.
+- Frontend reconnection UI.
+- Transition-based alerts.
 
 Next Task:
-Implement waiting-time estimation using the existing queue data.
+Implement frontend WebSocket reconnection and connection-status handling.
 ```
+
+Do not claim something is complete unless it has been verified.
 
 ---
 
-## 18. New Codex Session Procedure
+## 21. New Codex Session Procedure
 
-When a new Codex session starts, follow this sequence:
+Every new Codex session should:
 
 ```text
 1. Read AGENTS.md.
-2. Inspect README.md.
-3. Inspect project structure.
+2. Read README.md.
+3. Inspect the project structure.
 4. Run git status.
-5. Inspect recent commits.
-6. Identify the current project state.
-7. Read the relevant source files.
-8. Understand the existing implementation.
-9. Continue the current task.
-10. Test the changes.
-11. Update AGENTS.md if the project state changed.
-12. Commit the completed work.
-13. Push to GitHub when appropriate.
+5. Inspect the current branch.
+6. Inspect recent commits.
+7. Verify Milestones 1–3.
+8. Inspect current Milestone 4 implementation.
+9. Identify what remains.
+10. Implement only the required next step.
+11. Run relevant tests.
+12. Update documentation.
+13. Update AGENTS.md.
+14. Commit changes.
+15. Push to GitHub when appropriate.
 ```
 
-Never assume that the previous session completed a task merely because it is mentioned in documentation. Verify the actual code.
+Never restart the project.
+
+Never recreate completed milestones unless a verified bug requires it.
 
 ---
 
-## 19. Important Rule for Future Codex Sessions
+## 22. Golden Rule
 
-**Do not start over.**
-
-The repository and its Git history are the source of truth.
+The QueueFlow repository is the source of truth.
 
 When continuing work:
 
-> Inspect → Understand → Modify → Test → Document → Commit → Push
+**Inspect → Understand → Modify → Test → Document → Commit → Push**
 
-Preserve working functionality and build incrementally on the existing QueueFlow implementation.
-
+Build on the existing implementation and preserve working functionality.
