@@ -23,32 +23,40 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 5 — COMPLETED**
 - **Milestone 6 — COMPLETED**
 - **Milestone 7 — COMPLETED**
-- **Milestone 8 — CURRENT / NEXT DEVELOPMENT TARGET**
+- **Milestone 8 — COMPLETED**
+- **Milestone 9 — CURRENT / NEXT DEVELOPMENT TARGET**
 
 The exact implementation of completed milestones must always be verified against the actual codebase rather than assumed from this document.
 
 ### Current Milestone
 
-**Milestone 8 — Deployment and Production Verification**
+**Milestone 9 — Next Development Phase**
 
-The exact scope of Milestone 8 must be verified from the existing project documentation, Git history, and current implementation before development begins.
+The exact scope of Milestone 9 must be verified from the existing project documentation, Git history, and current implementation before development begins.
 
-Do not assume Milestone 8 requirements without inspecting the repository.
+Do not assume Milestone 9 requirements without inspecting the repository.
 
 Planned scope:
 
-- Production Docker Compose services for PostgreSQL, FastAPI, and the dashboard.
-- Same-origin `/api` and `/ws` reverse proxying with health checks.
-- Environment-based production configuration with no committed secrets.
-- Docker image build and runtime smoke-test verification.
+- FastAPI WebSocket endpoint for live queue updates:
+  `/ws/queues`
+- WebSocket connection manager.
+- Configurable gradual multi-queue simulator.
+- Persist simulated measurements.
+- Live React frontend updates.
+- WebSocket reconnection handling.
+- Connection/status fallback when the live connection is unavailable.
+- Transition-based queue alerts.
+- Appropriate backend/frontend tests.
+- Documentation updates.
 
-Before implementing Milestone 8, inspect the repository and determine which parts, if any, already exist. Do not duplicate existing functionality.
+Before implementing Milestone 4, inspect the repository and determine which parts, if any, already exist. Do not duplicate existing functionality.
 
 ---
 
 ## 3. Primary Development Rule
 
-**Continue from the existing codebase. Do not restart or recreate Milestones 1–7.**
+**Continue from the existing codebase. Do not restart or recreate Milestones 1–8.**
 
 Before making changes:
 
@@ -58,7 +66,7 @@ Before making changes:
 4. Run `git status`.
 5. Inspect recent Git commits.
 6. Identify the current branch.
-7. Verify the actual implementation of Milestones 1–7.
+7. Verify the actual implementation of Milestones 1–8.
 8. Identify existing Milestone 4 work.
 9. Understand the architecture before modifying it.
 
@@ -512,12 +520,13 @@ Milestone 4 — Completed
 Milestone 5 — Completed
 Milestone 6 — Completed
 Milestone 7 — Completed
+Milestone 8 — Completed
 ```
 
 ### Current
 
 ```text
-Milestone 8 — Deployment configuration complete; runtime smoke test pending Docker Desktop
+Milestone 9 — Next Development Phase
 ```
 
 ### Known Issues
@@ -533,10 +542,15 @@ No issues documented here yet.
 Update this section as work progresses.
 
 ```text
-1. Start Docker Desktop.
-2. Copy `.env.example` to `.env` and set a real URL-safe database password.
-3. Run `docker compose up --build -d` and verify all health checks.
-4. Verify dashboard HTTP, API, and WebSocket delivery through the reverse proxy.
+1. Verify the completed Milestones 1–8 implementation.
+2. Inspect the repository documentation and Git history for Milestone 9 requirements.
+3. Audit any existing Milestone 9 work.
+4. Implement the next Milestone 9 task incrementally.
+5. Add/complete relevant tests.
+6. Verify frontend/backend/AI/database integration where applicable.
+7. Update documentation.
+8. Update this AGENTS.md.
+9. Commit and push the completed work.
 ```
 
 ---
@@ -545,7 +559,7 @@ Update this section as work progresses.
 
 Milestone 4 has been completed.
 
-The next Codex session must treat Milestones 1–7 as completed unless the repository reveals a verified defect or unfinished implementation.
+The next Codex session must treat Milestones 1–8 as completed unless the repository reveals a verified defect or unfinished implementation.
 
 Do not recreate Milestone 4.
 
@@ -594,11 +608,11 @@ The next development target is Milestone 7.
 
 Milestone 5 has been completed.
 
-The next Codex session must treat Milestones 1–7 as completed unless the repository reveals a verified defect or unfinished implementation.
+The next Codex session must treat Milestones 1–8 as completed unless the repository reveals a verified defect or unfinished implementation.
 
 Do not recreate Milestone 5.
 
-Milestone 6 has now been completed. Before beginning Milestone 7, inspect the actual codebase, tests, documentation, and Git history to determine the exact Milestone 8 requirements.
+Milestone 6 has now been completed. Before beginning Milestone 7, inspect the actual codebase, tests, documentation, and Git history to determine the exact Milestone 9 requirements.
 
 ---
 
@@ -700,9 +714,9 @@ Every new Codex session should:
 4. Run git status.
 5. Inspect the current branch.
 6. Inspect recent commits.
-7. Verify Milestones 1–7.
-8. Inspect current Milestone 8 implementation.
-9. Determine the exact Milestone 8 requirements from project documentation and Git history.
+7. Verify Milestones 1–8.
+8. Inspect current Milestone 9 implementation.
+9. Determine the exact Milestone 9 requirements from project documentation and Git history.
 10. Identify what remains.
 11. Implement only the required next step.
 12. Run relevant tests.
@@ -727,31 +741,3 @@ When continuing work:
 **Inspect → Understand → Modify → Test → Document → Commit → Push**
 
 Build on the existing implementation and preserve working functionality.
-
----
-
-## Session Handoff — 2026-09-01 (Milestone 8)
-
-### Completed
-
-- Added production Docker Compose services for PostgreSQL, FastAPI, and an Nginx-served React dashboard.
-- Added health checks, Alembic startup migrations, same-origin API/WebSocket proxying, `.env.example`, and Docker build exclusions.
-- Added deployment and operational documentation.
-
-### Tested
-
-- `docker compose --env-file .env.example config` validated successfully.
-- Backend/AI: 36 tests passed.
-- Frontend: 7 tests passed, lint passed, and production build passed.
-
-### Remaining
-
-- Build and start the Compose stack with Docker Desktop running and a real `.env` password.
-
-### Known Issues
-
-- Docker image build/runtime smoke testing is blocked because Docker Desktop's daemon is unavailable on this machine.
-
-### Next Task
-
-Start Docker Desktop, run `docker compose up --build -d`, and verify the service health checks plus proxied dashboard/API/WebSocket behavior.
