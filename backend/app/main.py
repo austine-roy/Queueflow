@@ -6,7 +6,7 @@ import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import alerts, health, measurements, queues, realtime
+from app.api.routes import alerts, cameras, health, measurements, queues, realtime
 from app.core.config import get_settings
 from app.realtime.simulator import SimulatorProvider
 
@@ -44,6 +44,7 @@ app.add_middleware(
 )
 app.include_router(health.router, prefix="/api")
 app.include_router(queues.router, prefix="/api")
+app.include_router(cameras.router, prefix="/api")
 app.include_router(measurements.router, prefix="/api")
 app.include_router(alerts.router, prefix="/api")
 app.include_router(realtime.router)

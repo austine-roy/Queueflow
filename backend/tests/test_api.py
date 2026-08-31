@@ -74,3 +74,30 @@ def test_measurements_update_queue_and_preserve_closed_status(client: TestClient
 
 def test_measurement_for_missing_queue_is_not_found(client: TestClient) -> None:
     assert client.post("/api/queues/999/measurements", json={"person_count": 1, "density": 0.1}).status_code == 404
+
+
+def test_camera_configuration_and_observation_ingestion(client: TestClient, session: Session) -> None:
+    location = create_location(session)
+    queue = client.post("/api/queues", json={"name": "Security", "location_id": location.id, "capacity": 20}).json()
+    camera = client.post("/api/cameras", json={"name": "Entrance", "location_id": location.id, "queue_id": queue["id"], "source_type": "VIDEO_FILE", "source_url": "entrance.mp4"})
+    assert camera.status_code == 201
+
+    observation = client.post(f"/api/cameras/{camera.json()['id']}/observations", json={"person_count": 16, "density": 0.8})
+    assert observation.status_code == 200
+    assert client.get(f"/api/queues/{queue['id']}").json()["status"] == "CROWDED"
+    assert len(client.get(f"/api/queues/{queue['id']}/measurements").json()) == 1
+
+
+def test_camera_observation_requires_active_queue_assignment(client: TestClient, session: Session) -> None:
+    location = create_location(session)
+    camera = client.post("/api/cameras", json={"name": "Unassigned", "location_id": location.id, "source_type": "VIDEO_FILE"}).json()
+    assert client.post(f"/api/cameras/{camera['id']}/observations", json={"person_count": 1, "density": 0.1}).status_code == 409
+    client.put(f"/api/cameras/{camera['id']}", json={"is_active": False})
+    assert client.post(f"/api/cameras/{camera['id']}/observations", json={"person_count": 1, "density": 0.1}).status_code == 409
+
+
+def test_camera_rejects_queue_from_another_location(client: TestClient, session: Session) -> None:
+    first, second = create_location(session), create_location(session)
+    queue = client.post("/api/queues", json={"name": "Security", "location_id": first.id, "capacity": 20}).json()
+    response = client.post("/api/cameras", json={"name": "Entrance", "location_id": second.id, "queue_id": queue["id"], "source_type": "VIDEO_FILE"})
+    assert response.status_code == 422

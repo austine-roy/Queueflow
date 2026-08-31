@@ -1,4 +1,4 @@
-"""Camera configuration model; video processing is intentionally out of scope."""
+"""Camera configuration model for external AI observation sources."""
 
 from __future__ import annotations
 

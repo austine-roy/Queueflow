@@ -1,6 +1,6 @@
 # QueueFlow backend
 
-The backend provides the QueueFlow REST API, PostgreSQL persistence, Alembic migrations, configurable capacity-based queue status, and a transparent service-rate wait estimate. It does not yet process video or make ML predictions.
+The backend provides the QueueFlow REST API, PostgreSQL persistence, Alembic migrations, configurable capacity-based queue status, and a transparent service-rate wait estimate. Video analysis runs outside the API process; configured camera sources submit their AI observations to the backend for persistence and live delivery.
 
 ## Requirements
 
@@ -51,6 +51,20 @@ Set `QUEUEFLOW_SIMULATION_ENABLED=true` to start the development-only simulator 
 | `QUEUEFLOW_SIMULATION_SERVICE_RATE` | `12` | Simulated departures per minute. |
 
 Each event is JSON with a `type` of `queue_update` or `alert`. Measurements submitted to the REST API also broadcast through this same path. Alerts are emitted only when a queue enters a `CROWDED` or `CRITICAL` state, preventing repeated alerts while it remains in that state.
+
+## Camera observation ingestion
+
+Configure a camera with `POST /api/cameras`, assigning it to a queue at the same location. An external video/AI worker then submits each analyzed observation without holding an API request open for video processing:
+
+```json
+POST /api/cameras/{camera_id}/observations
+{
+  "person_count": 12,
+  "density": 0.6
+}
+```
+
+The backend validates that the camera is active and assigned to a queue, persists the measurement, recalculates queue status/wait time, and broadcasts the resulting `queue_update` plus any transition alert over `/ws/queues`. See `docs/api/README.md` for the full endpoint summary.
 
 ## Run the API
 

@@ -30,7 +30,7 @@
 
 ## Milestone 6 — Integration
 
-- [ ] Connect camera/AI measurements, backend persistence, WebSocket delivery, and dashboard.
+- [x] Connect camera/AI measurements, backend persistence, WebSocket delivery, and dashboard.
 
 ## Milestone 7 — Advanced capabilities
 

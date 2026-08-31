@@ -98,3 +98,19 @@ def test_publisher_sends_queue_and_transition_alert(session: Session) -> None:
     asyncio.run(publish_measurement(record, websocket_manager))
     assert [event["type"] for event in socket.events] == ["queue_update", "alert"]
     assert socket.events[0]["queue"]["current_count"] == 16
+
+
+def test_camera_observation_broadcasts_queue_update(client: TestClient, session: Session) -> None:
+    location = Location(name="Camera broadcast")
+    session.add(location)
+    session.commit(); session.refresh(location)
+    queue = Queue(name="Queue", location_id=location.id, capacity=20)
+    session.add(queue); session.commit(); session.refresh(queue)
+    camera = client.post("/api/cameras", json={"name": "Entrance", "location_id": location.id, "queue_id": queue.id, "source_type": "VIDEO_FILE"}).json()
+    with client.websocket_connect("/ws/queues") as websocket:
+        response = client.post(f"/api/cameras/{camera['id']}/observations", json={"person_count": 5, "density": 0.25})
+        assert response.status_code == 200
+        event = websocket.receive_json()
+    assert event["type"] == "queue_update"
+    assert event["queue"]["id"] == queue.id
+    assert event["queue"]["current_count"] == 5
