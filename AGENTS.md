@@ -27,16 +27,68 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 9 — COMPLETED & VERIFIED**
 - **Milestone 10 — COMPLETED & RUNTIME VERIFIED**
 - **Milestone 11 — COMPLETED & RUNTIME VERIFIED**
-- **Milestone 12 — COMPLETED & VERIFIED**
-- **Milestone 13 — NEXT**
+- **Milestone 12 — COMPLETED & RUNTIME VERIFIED**
+- **Milestone 13 — CURRENT / FINAL QA & PRODUCTION RELEASE**
 
 **### Current Milestone**
 
-**Milestone 13 — Next Development Phase**
+**Milestone 13 — Final QA & Production Release**
 
-Milestones 1–12 are complete and verified. Define Milestone 13 before implementation.
+Milestones 1–12 are complete and verified. Milestone 13 is the final QA and production-release phase.
 
-Milestone 12 handoff: analytics now limits per-queue history in PostgreSQL with a window query and preserves all-time counts; the safe composite measurement-history index was migrated. Baselines passed: 500 wait-estimation calls under one second, 20 WebSocket clients broadcast/disconnect without leaks, and 20 camera observations persisted with the final queue projection intact. Verification: 50 backend/AI tests; 8 frontend tests, lint, and production build passed; fresh Compose stacks applied migration `20260902_0003`, verified health/readiness/metrics, seeded analytics, admin authentication, and three simultaneous authenticated WebSockets. Known limits: the test baselines are single-process regression checks, not production capacity guarantees. Commit pending this handoff.
+The goal is to validate the complete QueueFlow system end-to-end, resolve release-blocking issues, finalize documentation, and prepare the project for production/demo delivery.
+
+Scope:
+
+1. **End-to-end QA**
+   - Verify critical workflows from camera observation through queue state, alerts, analytics, and dashboard updates.
+   - Verify authentication, RBAC, protected APIs, and WebSocket behavior.
+   - Test important success and failure paths.
+
+2. **Production deployment verification**
+   - Run a fresh production Docker Compose deployment.
+   - Verify migrations, PostgreSQL, FastAPI, Nginx, health/readiness, metrics, logging, and WebSockets.
+   - Verify the deployment starts cleanly from a fresh environment.
+
+3. **Security regression**
+   - Verify authentication/RBAC.
+   - Verify security headers and production HSTS.
+   - Verify login rate limiting.
+   - Verify secrets are not exposed.
+   - Confirm the Milestone 11 security hardening remains intact.
+
+4. **Performance regression**
+   - Run the existing Milestone 12 performance/regression checks.
+   - Verify analytics behavior and the measurement-history index.
+   - Verify multi-client WebSocket behavior.
+   - Verify concurrent observation ingestion.
+   - Treat single-process baselines as regression indicators, not production capacity guarantees.
+
+5. **Backup and recovery**
+   - Verify the documented PostgreSQL backup/restore procedure where safely possible.
+   - Do not perform destructive operations against real project data.
+   - Confirm recovery documentation is accurate.
+
+6. **UI/UX and release polish**
+   - Review major frontend workflows for obvious usability or visual issues.
+   - Fix release-blocking UI problems without redesigning working functionality unnecessarily.
+   - Verify responsive behavior where relevant to the project.
+
+7. **Documentation and demo readiness**
+   - Finalize README and deployment documentation.
+   - Ensure setup, environment configuration, authentication, operations, troubleshooting, and backup/restore instructions are accurate.
+   - Prepare the project for demonstration/submission.
+   - Record known limitations clearly.
+
+8. **Final verification**
+   - Run the complete backend/AI test suite.
+   - Run frontend tests.
+   - Run frontend lint.
+   - Run the production frontend build.
+   - Perform fresh Docker runtime verification.
+   - Resolve all release-blocking failures before marking the milestone complete.
+
+Do not introduce new major features during Milestone 13. Focus on verification, bug fixing, release hardening, documentation, and project completion.
 
 The goal is to validate and improve QueueFlow's behavior under realistic load while preserving all completed functionality.
 
@@ -103,7 +155,7 @@ Scope:
 
 Do not introduce unnecessary infrastructure. Use measurements to guide optimization and preserve the existing production architecture.
 
-The goal is to make QueueFlow easier to operate, diagnose, and monitor in production without disrupting the completed functionality from Milestones 1–11.
+The goal is to make QueueFlow easier to operate, diagnose, and monitor in production without disrupting the completed functionality from Milestones 1–12.
 
 Scope:
 
@@ -152,7 +204,7 @@ Do not introduce unnecessary infrastructure. Inspect the existing deployment and
 
 **## 3. Primary Development Rule**
 
-**\*\*Continue from the existing codebase. Do not restart or recreate Milestones 1–11.\*\***
+**\*\*Continue from the existing codebase. Do not restart or recreate Milestones 1–12.\*\***
 
 Before making changes:
 
@@ -168,7 +220,7 @@ Before making changes:
 
 6\. Identify the current branch.
 
-7\. Verify the actual implementation of Milestones 1–11.
+7\. Verify the actual implementation of Milestones 1–12.
 
 8\. Determine the current milestone and remaining work from the repository roadmap and documentation.
 
@@ -796,33 +848,34 @@ Milestone 8 — Completed & Runtime Verified
 Milestone 9 — Completed & Verified
 Milestone 10 — Completed & Runtime Verified
 Milestone 11 — Completed & Runtime Verified
+Milestone 12 — Completed & Runtime Verified
 ```
 
 **### Current**
 
 ```text
-Milestone 12 — Performance & Reliability
+Milestone 13 — Final QA & Production Release
 ```
 
 **### Known Issues**
 
-Update this section with verified issues.
+Update this section with verified issues only.
 
 ```text
-Two moderate React Router dependency advisories remain. They require a breaking React Router v7 upgrade and were documented rather than applied unsafely.
+Two moderate React Router dependency advisories remain. Resolving them requires a breaking React Router v7 upgrade and was previously documented rather than applied unsafely.
+Milestone 12 performance baselines are single-process regression checks and are not production capacity guarantees.
 ```
 
 **### Next Steps**
 
 ```text
-1. Verify the completed Milestones 1–11 implementation.
-2. Inspect the current API, database, WebSocket, observation, AI, and Docker architecture.
-3. Establish performance baselines before optimizing.
-4. Implement Milestone 12 performance and reliability improvements incrementally.
-5. Add focused load/concurrency/reliability tests.
-6. Perform production Docker verification under representative load.
-7. Update documentation and AGENTS.md.
-8. Commit and push the completed work.
+1. Verify the completed Milestones 1–12 implementation.
+2. Execute Milestone 13 end-to-end QA and release verification.
+3. Fix only release-blocking defects and regressions.
+4. Perform fresh production Docker verification.
+5. Finalize documentation and demo/submission readiness.
+6. Update AGENTS.md with final results.
+7. Commit and push the completed project.
 ```
 
 **---**
@@ -919,7 +972,7 @@ Milestone 10 is defined as the production observability and monitoring phase.
 
 Implement structured logging, health/readiness monitoring, useful operational metrics, production monitoring/troubleshooting support, error visibility, deployment observability, relevant tests, and documentation.
 
-Do not introduce unnecessary infrastructure. Preserve the completed Milestones 1–11.
+Do not introduce unnecessary infrastructure. Preserve the completed Milestones 1–12.
 
 ---
 
@@ -951,13 +1004,13 @@ Every new Codex session should:
 4. Run git status.
 5. Inspect the current branch.
 6. Inspect recent commits.
-7. Verify Milestones 1–11 against the actual codebase.
-8. Inspect the roadmap and current API, database, WebSocket, observation, AI, and Docker implementation for Milestone 12.
-9. Confirm the Milestone 12 scope: Performance & Reliability.
-10. Establish performance baselines before making optimizations.
-11. Present a concise implementation plan based on measured bottlenecks and the actual codebase.
-12. Implement only the approved Milestone 12 scope.
-13. Run relevant tests and verification, including representative-load Docker testing when available.
+7. Verify Milestones 1–12 against the actual codebase.
+8. Inspect the roadmap and current application, security, performance, and deployment state for Milestone 13.
+9. Confirm the Milestone 13 scope: Final QA & Production Release.
+10. Present a concise release verification plan based on the actual codebase.
+11. Implement only release-blocking fixes and approved QA/release work.
+12. Run the complete verification suite and fresh Docker runtime verification.
+13. Perform final documentation and demo/submission readiness checks.
 14. Update documentation.
 15. Update AGENTS.md.
 16. Commit changes.
@@ -968,7 +1021,7 @@ Never restart the project.
 
 Never recreate completed milestones unless a verified bug requires it.
 
-Do not expand Milestone 11 beyond the approved security and production hardening scope without explicit instruction.
+Do not expand Milestone 13 into new feature development without explicit instruction.
 
 ---
 
