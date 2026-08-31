@@ -6,7 +6,7 @@ QueueFlow ships as three Docker Compose services: PostgreSQL, the FastAPI backen
 
 ```bash
 cp .env.example .env
-# Replace POSTGRES_PASSWORD with a long, URL-safe random value.
+# Replace POSTGRES_PASSWORD and AUTH_SECRET_KEY with long, unique random values.
 docker compose up --build -d
 docker compose ps
 curl http://localhost:8000/api/health
@@ -26,4 +26,4 @@ docker compose down
 
 ## Configuration
 
-All values belong in the untracked root `.env` file. See `.env.example` for port, origin, and database settings. The Compose database URL includes the password, so use a URL-safe password or URL-encode reserved characters.
+All values belong in the untracked root `.env` file. See `.env.example` for port, origin, database, and authentication settings. `AUTH_SECRET_KEY` is required and must be at least 32 characters; it signs access JWTs. The Compose database URL includes the password, so use a URL-safe password or URL-encode reserved characters. Bootstrap the initial administrator only with the explicit `python -m app.bootstrap_admin` command described in `backend/README.md`; never place bootstrap credentials in Compose configuration.

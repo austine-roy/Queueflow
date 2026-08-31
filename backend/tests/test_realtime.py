@@ -14,6 +14,10 @@ from app.realtime.websocket_manager import WebSocketManager, manager
 from app.services.measurement_service import record_measurement
 from app.realtime.publisher import publish_measurement
 from app.schemas.measurement import MeasurementCreate
+from app.core.config import get_settings
+from app.models.enums import UserRole
+from app.models.user import User
+from app.services.auth_service import create_access_token
 
 
 class FakeSocket:
@@ -56,7 +60,8 @@ def test_connection_manager_removes_failed_client() -> None:
 
 
 def test_websocket_endpoint_connects_and_disconnects(client: TestClient) -> None:
-    with client.websocket_connect("/ws/queues") as websocket:
+    token = create_access_token(1, UserRole.ADMIN, get_settings())
+    with client.websocket_connect("/ws/queues", subprotocols=[f"queueflow.jwt.{token}"]) as websocket:
         assert len(manager.active_connections) == 1
     assert not manager.active_connections
 
@@ -107,7 +112,8 @@ def test_camera_observation_broadcasts_queue_update(client: TestClient, session:
     queue = Queue(name="Queue", location_id=location.id, capacity=20)
     session.add(queue); session.commit(); session.refresh(queue)
     camera = client.post("/api/cameras", json={"name": "Entrance", "location_id": location.id, "queue_id": queue.id, "source_type": "VIDEO_FILE"}).json()
-    with client.websocket_connect("/ws/queues") as websocket:
+    token = create_access_token(1, UserRole.ADMIN, get_settings())
+    with client.websocket_connect("/ws/queues", subprotocols=[f"queueflow.jwt.{token}"]) as websocket:
         response = client.post(f"/api/cameras/{camera['id']}/observations", json={"person_count": 5, "density": 0.25})
         assert response.status_code == 200
         event = websocket.receive_json()

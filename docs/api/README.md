@@ -1,6 +1,14 @@
 # API documentation
 
-The interactive API contract is available from the running backend at `/docs`. The principal resources are health, queues, queue measurements, alerts, and cameras.
+The interactive API contract is available from the running backend at `/docs`. The principal resources are authentication, accounts, health, queues, queue measurements, alerts, and cameras.
+
+## Authentication and authorization
+
+`POST /api/auth/login` returns a bearer JWT and the current account after verifying an Argon2 password hash. Send that JWT in `Authorization: Bearer <token>` for protected API calls. `GET /api/auth/me` returns the active account, and `POST /api/auth/logout` returns `204`; the browser clears its in-memory token.
+
+Missing/invalid credentials return `401`; valid credentials without the required role return `403`. Admins have full management access, operators can perform daily measurement/observation/alert operations, and viewers have read-only queue, camera, alert, and analytics access. `/api/users` is administrator-only.
+
+`/ws/queues` is also protected. Pass the token as the WebSocket subprotocol `queueflow.jwt.<token>` (not as a URL query parameter).
 
 ## Camera observation ingestion
 

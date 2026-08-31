@@ -4,6 +4,8 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session, selectinload
 
 from app.core.database import get_db
+from app.api.dependencies import require_roles
+from app.models.enums import UserRole
 from app.models.queue import Queue
 from app.schemas.analytics import QueueAnalyticsRead
 from app.schemas.measurement import MeasurementRead
@@ -15,6 +17,7 @@ router = APIRouter(prefix="/analytics", tags=["Analytics"])
 def queue_analytics(
     measurement_limit: int = Query(default=200, ge=1, le=1000),
     session: Session = Depends(get_db),
+    _: object = Depends(require_roles(UserRole.VIEWER, UserRole.OPERATOR, UserRole.ADMIN)),
 ) -> list[QueueAnalyticsRead]:
     queues = session.query(Queue).options(selectinload(Queue.measurements)).order_by(Queue.id).all()
     response: list[QueueAnalyticsRead] = []

@@ -1,11 +1,14 @@
 import { BarChart3, Bell, LayoutDashboard, Menu, Settings, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import type { UserRole } from "../../types/api";
 
-const links = [{ to: "/dashboard", label: "Dashboard", icon: LayoutDashboard }, { to: "/queues", label: "Queues", icon: Menu }, { to: "/analytics", label: "Analytics", icon: BarChart3 }, { to: "/alerts", label: "Alerts", icon: Bell }, { to: "/settings", label: "Settings", icon: Settings }];
+const links: Array<{ to: string; label: string; icon: typeof LayoutDashboard; roles?: UserRole[] }> = [{ to: "/dashboard", label: "Dashboard", icon: LayoutDashboard }, { to: "/queues", label: "Queues", icon: Menu }, { to: "/analytics", label: "Analytics", icon: BarChart3 }, { to: "/alerts", label: "Alerts", icon: Bell }, { to: "/settings", label: "Settings", icon: Settings, roles: ["admin"] }];
 
 function NavItems({ onNavigate }: { onNavigate?: () => void }) {
-  return <nav aria-label="Main navigation" className="space-y-1">{links.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} onClick={onNavigate} className={({ isActive }) => `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold ${isActive ? "bg-blue-600 text-white" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}><Icon size={18} aria-hidden="true" />{label}</NavLink>)}</nav>;
+  const { hasRole } = useAuth();
+  return <nav aria-label="Main navigation" className="space-y-1">{links.filter((link) => !link.roles || hasRole(...link.roles)).map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} onClick={onNavigate} className={({ isActive }) => `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold ${isActive ? "bg-blue-600 text-white" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}><Icon size={18} aria-hidden="true" />{label}</NavLink>)}</nav>;
 }
 
 export function Sidebar() {

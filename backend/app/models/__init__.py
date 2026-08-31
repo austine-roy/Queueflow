@@ -5,5 +5,6 @@ from app.models.camera import Camera
 from app.models.location import Location
 from app.models.measurement import QueueMeasurement
 from app.models.queue import Queue
+from app.models.user import User
 
-__all__ = ["Alert", "Camera", "Location", "Queue", "QueueMeasurement"]
+__all__ = ["Alert", "Camera", "Location", "Queue", "QueueMeasurement", "User"]

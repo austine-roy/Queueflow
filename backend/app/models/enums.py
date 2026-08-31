@@ -22,3 +22,9 @@ class AlertSeverity(str, Enum):
     INFO = "INFO"
     WARNING = "WARNING"
     CRITICAL = "CRITICAL"
+
+
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    OPERATOR = "operator"
+    VIEWER = "viewer"

@@ -9,6 +9,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.api.dependencies import require_roles
+from app.models.enums import UserRole
 from app.models.alert import Alert
 from app.schemas.alert import AlertRead
 
@@ -20,6 +22,7 @@ def list_alerts(
     active: Optional[bool] = Query(default=None),
     queue_id: Optional[int] = Query(default=None, gt=0),
     session: Session = Depends(get_db),
+    _: object = Depends(require_roles(UserRole.VIEWER, UserRole.OPERATOR, UserRole.ADMIN)),
 ) -> list[Alert]:
     query = session.query(Alert)
     if active is not None:
@@ -30,7 +33,7 @@ def list_alerts(
 
 
 @router.post("/{alert_id}/resolve", response_model=AlertRead, summary="Resolve an active alert")
-def resolve_alert(alert_id: int, session: Session = Depends(get_db)) -> Alert:
+def resolve_alert(alert_id: int, session: Session = Depends(get_db), _: object = Depends(require_roles(UserRole.OPERATOR, UserRole.ADMIN))) -> Alert:
     alert = session.get(Alert, alert_id)
     if alert is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alert not found")

@@ -1,7 +1,10 @@
 import axios from "axios";
-import type { Alert, Measurement, Queue, QueueAnalytics } from "../types/api";
+import type { Alert, LoginResult, Measurement, Queue, QueueAnalytics } from "../types/api";
 
 const savedApiUrlKey = "queueflow.apiBaseUrl";
+let accessToken: string | null = null;
+
+export function setAccessToken(token: string | null): void { accessToken = token; }
 
 export function getApiBaseUrl(): string {
   return localStorage.getItem(savedApiUrlKey) ?? import.meta.env.VITE_API_BASE_URL ?? "";
@@ -12,8 +15,14 @@ export function saveApiBaseUrl(value: string): void {
 }
 
 function apiClient() {
-  return axios.create({ baseURL: getApiBaseUrl(), timeout: 8_000 });
+  return axios.create({ baseURL: getApiBaseUrl(), timeout: 8_000, headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined });
 }
+
+export async function login(email: string, password: string): Promise<LoginResult> {
+  return (await apiClient().post<LoginResult>("/api/auth/login", { email, password })).data;
+}
+
+export async function logout(): Promise<void> { await apiClient().post("/api/auth/logout"); }
 
 export async function getQueues(): Promise<Queue[]> {
   return (await apiClient().get<Queue[]>("/api/queues")).data;

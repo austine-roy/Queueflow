@@ -2,8 +2,9 @@
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Optional
 
-from pydantic import Field, PositiveFloat
+from pydantic import Field, PositiveFloat, PositiveInt, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -27,6 +28,10 @@ class Settings(BaseSettings):
     queueflow_simulation_arrival_rate: float = Field(default=18, ge=0)
     queueflow_simulation_service_rate: float = Field(default=12, ge=0)
     queueflow_simulation_record_measurements: bool = True
+    auth_secret_key: SecretStr = Field(min_length=32)
+    auth_access_token_minutes: PositiveInt = Field(default=30)
+    auth_bootstrap_admin_email: Optional[str] = None
+    auth_bootstrap_admin_password: Optional[SecretStr] = None
 
 
 @lru_cache

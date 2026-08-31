@@ -1,4 +1,20 @@
 export type QueueStatus = "NORMAL" | "BUSY" | "CROWDED" | "CRITICAL" | "CLOSED";
+export type UserRole = "admin" | "operator" | "viewer";
+
+export interface AuthUser {
+  id: number;
+  email: string;
+  role: UserRole;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LoginResult {
+  access_token: string;
+  token_type: "bearer";
+  user: AuthUser;
+}
 
 export interface Queue {
   id: number;

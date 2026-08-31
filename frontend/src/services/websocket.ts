@@ -8,12 +8,14 @@ export function getQueueWebSocketUrl(): string {
   return url.toString();
 }
 
+export function getQueueWebSocketProtocol(token: string): string { return `queueflow.jwt.${token}`; }
+
 export class QueueWebSocket {
   private socket: WebSocket | null = null; private retry = 0; private timer: number | null = null; private closed = false;
-  constructor(private readonly onStatus: (status: "connecting" | "live" | "disconnected") => void, private readonly onEvent: (event: RealtimeEvent) => void) {}
+  constructor(private readonly token: string, private readonly onStatus: (status: "connecting" | "live" | "disconnected") => void, private readonly onEvent: (event: RealtimeEvent) => void) {}
   connect(): void {
     this.closed = false; this.onStatus("connecting");
-    this.socket = new WebSocket(getQueueWebSocketUrl());
+    this.socket = new WebSocket(getQueueWebSocketUrl(), getQueueWebSocketProtocol(this.token));
     this.socket.onopen = () => { this.retry = 0; this.onStatus("live"); };
     this.socket.onmessage = (message) => { try { this.onEvent(JSON.parse(message.data) as RealtimeEvent); } catch { /* ignore malformed events */ } };
     this.socket.onclose = () => { if (!this.closed) this.scheduleReconnect(); else this.onStatus("disconnected"); };

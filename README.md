@@ -1,6 +1,6 @@
 # QueueFlow
 
-QueueFlow is an AI-assisted queue monitoring and management system. It is being developed in small, independently testable milestones. The backend/database foundation, dashboard, real-time layer, video-analysis baseline, camera-observation ingestion, and advanced operations layer are implemented.
+QueueFlow is an AI-assisted queue monitoring and management system. It is being developed in small, independently testable milestones. The backend/database foundation, dashboard, real-time layer, video-analysis baseline, camera-observation ingestion, advanced operations layer, and role-based authentication are implemented.
 
 ## Planned capabilities
 
@@ -59,4 +59,4 @@ The current work plan is in [docs/development/roadmap.md](docs/development/roadm
 
 ## Status
 
-Milestone 8 — Deployment verified. Docker Compose builds and starts PostgreSQL, FastAPI, and an Nginx-served dashboard; health checks, proxied API requests, and WebSocket handshakes all succeed.
+Milestone 9 — Authentication and role-based access control verified. QueueFlow uses Argon2 password hashing, short-lived JWT access tokens, in-memory browser token storage, protected REST endpoints, and authenticated WebSocket subprotocols. See the backend and infrastructure documentation for setup details.

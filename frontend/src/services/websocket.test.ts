@@ -11,7 +11,7 @@ class MockWebSocket {
   onerror: (() => void) | null = null;
   close = vi.fn(() => this.onclose?.());
 
-  constructor(public readonly url: string) {
+  constructor(public readonly url: string, public readonly protocols?: string | string[]) {
     MockWebSocket.instances.push(this);
   }
 }
@@ -27,9 +27,10 @@ describe("QueueWebSocket", () => {
     vi.useFakeTimers();
     vi.stubGlobal("WebSocket", MockWebSocket);
     const statuses: string[] = [];
-    const connection = new QueueWebSocket((status) => statuses.push(status), vi.fn());
+    const connection = new QueueWebSocket("test-token", (status) => statuses.push(status), vi.fn());
 
     connection.connect();
+    expect(MockWebSocket.instances[0].protocols).toEqual("queueflow.jwt.test-token");
     MockWebSocket.instances[0].onopen?.();
     MockWebSocket.instances[0].onclose?.();
     expect(statuses).toEqual(["connecting", "live", "disconnected"]);

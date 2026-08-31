@@ -1,14 +1,18 @@
 """WebSocket connection registry, independent of queue business logic."""
 
 from fastapi import WebSocket
+from typing import Optional
 
 
 class WebSocketManager:
     def __init__(self) -> None:
         self.active_connections: list[WebSocket] = []
 
-    async def connect(self, websocket: WebSocket) -> None:
-        await websocket.accept()
+    async def connect(self, websocket: WebSocket, subprotocol: Optional[str] = None) -> None:
+        if subprotocol is None:
+            await websocket.accept()
+        else:
+            await websocket.accept(subprotocol=subprotocol)
         self.active_connections.append(websocket)
 
     def disconnect(self, websocket: WebSocket) -> None:

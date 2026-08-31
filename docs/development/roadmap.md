@@ -40,3 +40,10 @@
 
 - [x] Add production Docker Compose configuration, health checks, and deployment documentation.
 - [x] Build the production images and run the complete Docker Compose smoke test, including proxied API and WebSocket checks.
+
+## Milestone 9 — Authentication & role-based access control
+
+- [x] Add Argon2-hashed accounts, JWT authentication, and safe environment-driven administrator bootstrap.
+- [x] Protect REST and WebSocket access with `admin`, `operator`, and `viewer` roles.
+- [x] Add in-memory frontend authentication state, protected routes, role-aware controls, and access-denied handling.
+- [x] Add authentication/RBAC tests and verify backend, frontend, lint, and production build checks.

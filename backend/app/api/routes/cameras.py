@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.core.database import get_db
+from app.api.dependencies import require_roles
+from app.models.enums import UserRole
 from app.models.camera import Camera
 from app.models.location import Location
 from app.models.queue import Queue
@@ -44,6 +46,7 @@ def list_cameras(
     queue_id: Optional[int] = Query(default=None, gt=0),
     active: Optional[bool] = Query(default=None),
     session: Session = Depends(get_db),
+    _: object = Depends(require_roles(UserRole.VIEWER, UserRole.OPERATOR, UserRole.ADMIN)),
 ) -> list[Camera]:
     query = session.query(Camera)
     if location_id is not None:
@@ -56,7 +59,7 @@ def list_cameras(
 
 
 @router.post("", response_model=CameraRead, status_code=status.HTTP_201_CREATED, summary="Configure a camera")
-def create_camera(payload: CameraCreate, session: Session = Depends(get_db)) -> Camera:
+def create_camera(payload: CameraCreate, session: Session = Depends(get_db), _: object = Depends(require_roles(UserRole.ADMIN))) -> Camera:
     validate_camera_assignment(session, payload.location_id, payload.queue_id)
     camera = Camera(**payload.model_dump())
     session.add(camera)
@@ -66,12 +69,12 @@ def create_camera(payload: CameraCreate, session: Session = Depends(get_db)) -> 
 
 
 @router.get("/{camera_id}", response_model=CameraRead, summary="Get a camera")
-def get_camera(camera_id: int, session: Session = Depends(get_db)) -> Camera:
+def get_camera(camera_id: int, session: Session = Depends(get_db), _: object = Depends(require_roles(UserRole.VIEWER, UserRole.OPERATOR, UserRole.ADMIN))) -> Camera:
     return get_camera_or_404(session, camera_id)
 
 
 @router.put("/{camera_id}", response_model=CameraRead, summary="Update a camera")
-def update_camera(camera_id: int, payload: CameraUpdate, session: Session = Depends(get_db)) -> Camera:
+def update_camera(camera_id: int, payload: CameraUpdate, session: Session = Depends(get_db), _: object = Depends(require_roles(UserRole.ADMIN))) -> Camera:
     camera = get_camera_or_404(session, camera_id)
     changes = payload.model_dump(exclude_unset=True)
     location_id = changes.get("location_id", camera.location_id)
@@ -85,7 +88,7 @@ def update_camera(camera_id: int, payload: CameraUpdate, session: Session = Depe
 
 
 @router.post("/{camera_id}/observations", response_model=CameraRead, summary="Ingest an AI queue observation")
-async def ingest_observation(camera_id: int, payload: CameraObservationCreate, session: Session = Depends(get_db)) -> CameraRead:
+async def ingest_observation(camera_id: int, payload: CameraObservationCreate, session: Session = Depends(get_db), _: object = Depends(require_roles(UserRole.OPERATOR, UserRole.ADMIN))) -> CameraRead:
     """Persist a camera observation and deliver the resulting real-time events."""
 
     camera = get_camera_or_404(session, camera_id)

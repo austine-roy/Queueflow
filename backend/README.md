@@ -25,7 +25,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-`DATABASE_URL` is required and is read from the environment (or root `.env`). Set it to the same PostgreSQL credentials as `POSTGRES_*`; never commit `.env`.
+`DATABASE_URL` and `AUTH_SECRET_KEY` are required and are read from the environment (or root `.env`). `AUTH_SECRET_KEY` must be a unique, high-entropy signing secret of at least 32 characters; never commit `.env`.
 
 ## Database and seed data
 
@@ -39,9 +39,31 @@ python -m app.seed
 
 The seed command creates one demo location, two queues, and one simulated camera only when they are absent. It is explicit and is not run automatically.
 
+## Authentication and roles
+
+Passwords are hashed with Argon2. Access tokens are short-lived HS256 JWTs signed with the required `AUTH_SECRET_KEY`; the browser keeps its token only in memory.
+
+Create the first administrator explicitly from environment variables. The command refuses to overwrite an existing account and refuses to bootstrap when any account already exists:
+
+```bash
+export AUTH_BOOTSTRAP_ADMIN_EMAIL=admin@example.com
+export AUTH_BOOTSTRAP_ADMIN_PASSWORD='use-a-strong-unique-password'
+python -m app.bootstrap_admin
+```
+
+`POST /api/auth/login` accepts an email and password. `GET /api/auth/me` and `POST /api/auth/logout` require `Authorization: Bearer <token>`; logout clears the browser token because JWTs are stateless for this milestone. An admin can manage accounts through `/api/users`.
+
+| Role | Access |
+| --- | --- |
+| `admin` | Full queue/camera configuration, account management, and all operational/read access. |
+| `operator` | Queue, camera, alert, analytics, and live-view reads; may submit measurements/observations and resolve alerts. |
+| `viewer` | Read-only queue, camera, alert, analytics, and live-view access. |
+
+Protected HTTP routes return `401` for missing or invalid credentials and `403` for an authenticated account without permission. The `/ws/queues` endpoint requires the JWT in the `Sec-WebSocket-Protocol` value `queueflow.jwt.<token>`; tokens are deliberately never accepted in query parameters.
+
 ## Real-time simulator and WebSocket
 
-Set `QUEUEFLOW_SIMULATION_ENABLED=true` to start the development-only simulator with the API. It updates every non-closed queue gradually, persists changed measurements, and broadcasts events to every client connected to `ws://<host>:<port>/ws/queues`.
+Set `QUEUEFLOW_SIMULATION_ENABLED=true` to start the development-only simulator with the API. It updates every non-closed queue gradually, persists changed measurements, and broadcasts events to every authenticated client connected to `ws://<host>:<port>/ws/queues`.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |

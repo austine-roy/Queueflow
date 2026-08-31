@@ -24,33 +24,15 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 6 — COMPLETED**
 - **Milestone 7 — COMPLETED**
 - **Milestone 8 — COMPLETED & RUNTIME VERIFIED**
-- **Milestone 9 — CURRENT / NEXT DEVELOPMENT TARGET**
+- **Milestone 9 — COMPLETED & VERIFIED**
 
 The exact implementation of completed milestones must always be verified against the actual codebase rather than assumed from this document.
 
 ### Current Milestone
 
-**Milestone 9 — Next Development Phase**
+**Milestone 9 — Authentication & Role-Based Access Control (COMPLETED)**
 
-The exact scope of Milestone 9 must be verified from the existing project documentation, Git history, and current implementation before development begins.
-
-Do not assume Milestone 9 requirements without inspecting the repository.
-
-Planned scope:
-
-- FastAPI WebSocket endpoint for live queue updates:
-  `/ws/queues`
-- WebSocket connection manager.
-- Configurable gradual multi-queue simulator.
-- Persist simulated measurements.
-- Live React frontend updates.
-- WebSocket reconnection handling.
-- Connection/status fallback when the live connection is unavailable.
-- Transition-based queue alerts.
-- Appropriate backend/frontend tests.
-- Documentation updates.
-
-Before implementing Milestone 4, inspect the repository and determine which parts, if any, already exist. Do not duplicate existing functionality.
+Implemented Argon2 password hashing, short-lived JWT access tokens with a required signing secret, administrator bootstrap, and `admin`/`operator`/`viewer` authorization. REST endpoints enforce consistent `401`/`403` responses, and `/ws/queues` authenticates with a `Sec-WebSocket-Protocol` token rather than a query parameter. The React application keeps tokens in memory, has protected routes, role-aware navigation, login/logout, and an access-denied page.
 
 ---
 
@@ -521,12 +503,13 @@ Milestone 5 — Completed
 Milestone 6 — Completed
 Milestone 7 — Completed
 Milestone 8 — Completed & Runtime Verified
+Milestone 9 — Completed & Verified
 ```
 
 ### Current
 
 ```text
-Milestone 9 — Next Development Phase
+Milestone 9 — Completed & Verified
 ```
 
 ### Known Issues
@@ -534,7 +517,7 @@ Milestone 9 — Next Development Phase
 Update this section with verified issues.
 
 ```text
-No issues documented here yet.
+Frontend test output includes existing React Router future-flag and zero-size chart warnings; tests pass.
 ```
 
 ### Next Steps
@@ -542,15 +525,8 @@ No issues documented here yet.
 Update this section as work progresses.
 
 ```text
-1. Verify the completed Milestones 1–8 implementation.
-2. Inspect the repository documentation and Git history for Milestone 9 requirements.
-3. Audit any existing Milestone 9 work.
-4. Implement the next Milestone 9 task incrementally.
-5. Add/complete relevant tests.
-6. Verify frontend/backend/AI/database integration where applicable.
-7. Update documentation.
-8. Update this AGENTS.md.
-9. Commit and push the completed work.
+1. Inspect and define the next milestone before making changes.
+2. Preserve the authentication contract and role matrix unless a verified requirement calls for a change.
 ```
 
 ---
@@ -651,6 +627,29 @@ Do not recreate Milestone 7 unless a verified defect requires changes.
 ---
 
 ## 23. Codex Session Handoff
+
+### Milestone 9 session handoff
+
+Completed:
+- Added Alembic user/account migration, Argon2 password hashing, JWT login/current-user/logout endpoints, and safe environment-driven administrator bootstrap.
+- Enforced the admin/operator/viewer role matrix across REST endpoints and authenticated `/ws/queues` through a WebSocket subprotocol.
+- Added in-memory frontend authentication, login/logout, protected routes, role-aware settings navigation, and an unauthorized state.
+- Updated authentication, deployment, API, and roadmap documentation.
+
+Tested:
+- `backend/.venv/bin/python -m pytest backend/tests ai/tests` — 41 passed.
+- `npm test`, `npm run lint`, and `npm run build` in `frontend/` — passed.
+- A fresh isolated Docker Compose PostgreSQL stack applied Alembic revision `20260901_0002`, bootstrapped an admin from transient environment variables, verified login, and verified authenticated/rejected WebSocket handshakes.
+- Authentication success/failure, 401/403 behavior, admin/operator/viewer permissions, authenticated WebSocket access, and unauthenticated WebSocket rejection are covered by backend tests.
+
+Remaining:
+- No verified Milestone 9 implementation work remains.
+
+Known issues:
+- Frontend tests emit existing React Router future-flag and zero-size chart warnings; they do not fail tests.
+
+Next task:
+Inspect and define the next milestone before making changes.
 
 At the end of every significant Codex session, update this file.
 
