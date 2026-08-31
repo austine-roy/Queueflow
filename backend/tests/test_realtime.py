@@ -11,6 +11,9 @@ from app.models.location import Location
 from app.models.queue import Queue
 from app.realtime.simulator import SimulatorProvider
 from app.realtime.websocket_manager import WebSocketManager, manager
+from app.services.measurement_service import record_measurement
+from app.realtime.publisher import publish_measurement
+from app.schemas.measurement import MeasurementCreate
 
 
 class FakeSocket:
@@ -25,6 +28,11 @@ class FakeSocket:
         self.events.append(event)
 
 
+class FailingSocket(FakeSocket):
+    async def send_json(self, event: dict) -> None:
+        raise RuntimeError("connection is closed")
+
+
 def test_connection_manager_broadcasts_to_multiple_clients() -> None:
     websocket_manager = WebSocketManager()
     first, second = FakeSocket(), FakeSocket()
@@ -35,6 +43,16 @@ def test_connection_manager_broadcasts_to_multiple_clients() -> None:
     assert first.events == second.events == [{"type": "queue_update"}]
     websocket_manager.disconnect(first)
     assert websocket_manager.active_connections == [second]
+
+
+def test_connection_manager_removes_failed_client() -> None:
+    websocket_manager = WebSocketManager()
+    healthy, failed = FakeSocket(), FailingSocket()
+    asyncio.run(websocket_manager.connect(healthy))
+    asyncio.run(websocket_manager.connect(failed))
+    asyncio.run(websocket_manager.broadcast({"type": "queue_update"}))
+    assert websocket_manager.active_connections == [healthy]
+    assert healthy.events == [{"type": "queue_update"}]
 
 
 def test_websocket_endpoint_connects_and_disconnects(client: TestClient) -> None:
@@ -64,3 +82,19 @@ def test_alert_created_once_when_queue_enters_crowded(client: TestClient, sessio
     assert alerts.status_code == 200
     assert len(alerts.json()) == 1
     assert alerts.json()[0]["type"] == "QUEUE_CROWDED"
+
+
+def test_publisher_sends_queue_and_transition_alert(session: Session) -> None:
+    location = Location(name="Publisher test")
+    session.add(location)
+    session.commit(); session.refresh(location)
+    queue = Queue(name="Queue", location_id=location.id, capacity=20, current_count=10)
+    session.add(queue); session.commit(); session.refresh(queue)
+    settings = Settings(database_url="sqlite://")
+    record = record_measurement(session, queue, MeasurementCreate(person_count=16, density=0.8), settings)
+    websocket_manager = WebSocketManager()
+    socket = FakeSocket()
+    asyncio.run(websocket_manager.connect(socket))
+    asyncio.run(publish_measurement(record, websocket_manager))
+    assert [event["type"] for event in socket.events] == ["queue_update", "alert"]
+    assert socket.events[0]["queue"]["current_count"] == 16

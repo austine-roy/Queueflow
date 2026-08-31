@@ -512,7 +512,7 @@ Milestone 3 — Completed
 ### Current
 
 ```text
-Milestone 4 — Real-Time Queue Layer
+Milestone 5 — AI foundations (recommended next target)
 ```
 
 ### Known Issues
@@ -528,14 +528,9 @@ No issues documented here yet.
 Update this section as work progresses.
 
 ```text
-1. Verify the completed Milestone 1–3 implementation.
-2. Audit existing Milestone 4 work.
-3. Implement missing real-time queue functionality.
-4. Add/complete tests.
-5. Verify frontend and backend integration.
-6. Update documentation.
-7. Update this AGENTS.md.
-8. Commit and push the completed work.
+1. Connect a replaceable camera/video AI measurement provider.
+2. Preserve the existing persistence and WebSocket publisher interface.
+3. Add AI pipeline tests and performance checks.
 ```
 
 ---
@@ -630,3 +625,31 @@ When continuing work:
 **Inspect → Understand → Modify → Test → Document → Commit → Push**
 
 Build on the existing implementation and preserve working functionality.
+
+---
+
+## Session Handoff — 2026-09-01
+
+### Completed
+
+- Completed Milestone 4 real-time delivery: `/ws/queues`, safe multi-client connection handling, a configurable gradual simulator, persistence, and transition-based alerts.
+- Unified simulator and REST measurement broadcasts through one real-time publisher.
+- Added reconnect coverage for the frontend WebSocket client and failure/publisher coverage for the backend.
+- Updated the real-time setup and event documentation.
+
+### Tested
+
+- Backend: `.venv/bin/python -m pytest` — 20 tests passed.
+- Frontend: `npm test -- --run`, `npm run lint`, and `npm run build`.
+
+### Remaining
+
+- Milestone 5 AI/video detection and tracking work has not begun.
+
+### Known Issues
+
+- The frontend production build reports a non-blocking chunk-size warning.
+
+### Next Task
+
+Implement a replaceable video/camera measurement provider for Milestone 5, publishing through the established persistence and real-time interfaces.

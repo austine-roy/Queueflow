@@ -39,6 +39,19 @@ python -m app.seed
 
 The seed command creates one demo location, two queues, and one simulated camera only when they are absent. It is explicit and is not run automatically.
 
+## Real-time simulator and WebSocket
+
+Set `QUEUEFLOW_SIMULATION_ENABLED=true` to start the development-only simulator with the API. It updates every non-closed queue gradually, persists changed measurements, and broadcasts events to every client connected to `ws://<host>:<port>/ws/queues`.
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `QUEUEFLOW_SIMULATION_ENABLED` | `false` | Enable the development simulator. |
+| `QUEUEFLOW_SIMULATION_INTERVAL` | `2` | Seconds between simulator cycles. |
+| `QUEUEFLOW_SIMULATION_ARRIVAL_RATE` | `18` | Simulated arrivals per minute. |
+| `QUEUEFLOW_SIMULATION_SERVICE_RATE` | `12` | Simulated departures per minute. |
+
+Each event is JSON with a `type` of `queue_update` or `alert`. Measurements submitted to the REST API also broadcast through this same path. Alerts are emitted only when a queue enters a `CROWDED` or `CRITICAL` state, preventing repeated alerts while it remains in that state.
+
 ## Run the API
 
 ```bash

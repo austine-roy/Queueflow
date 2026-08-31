@@ -27,6 +27,8 @@ The development dashboard is available at `http://localhost:5173`.
 
 The backend's `FRONTEND_ORIGIN` must allow the dashboard origin for browser requests.
 
+The dashboard connects to the backend at `/ws/queues` and displays its live-connection state. On an unavailable or dropped connection, it uses exponential reconnection delays capped at eight seconds while ordinary REST polling continues to refresh queue data.
+
 ## Commands
 
 ```bash
@@ -36,6 +38,6 @@ npm test         # Vitest component/page tests
 npm run build    # production build
 ```
 
-## API limitations in Milestone 3
+## API limitations
 
-The current backend exposes queues and per-queue measurements. It does not yet expose location names or an alert-list API. The dashboard accurately renders `Location #<id>`, aggregates measurements client-side for analytics, and explains when alerts are unavailable instead of showing fabricated data.
+The current backend exposes queues, per-queue measurements, alerts, and real-time queue events. Location names are not yet included in queue API responses, so the dashboard renders `Location #<id>`.

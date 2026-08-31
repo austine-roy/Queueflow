@@ -20,8 +20,9 @@
 
 ## Milestone 4 — Mock real-time system
 
-- [ ] Generate realistic simulated queue measurements.
-- [ ] Add backend ingestion and WebSocket updates.
+- [x] Generate realistic simulated queue measurements.
+- [x] Persist simulated and REST-ingested measurements, then broadcast them over WebSockets.
+- [x] Add reconnecting frontend updates, REST polling fallback, connection status, and transition alerts.
 
 ## Milestone 5 — AI foundations
 

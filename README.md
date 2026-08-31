@@ -59,4 +59,4 @@ The current work plan is in [docs/development/roadmap.md](docs/development/roadm
 
 ## Status
 
-Milestone 3 — Frontend Dashboard: complete. The recommended next task is Milestone 4: Real-Time Queue Simulation + WebSocket Infrastructure.
+Milestone 4 — Real-Time Queue Layer: complete. The backend can simulate gradual multi-queue changes, persist each measurement, and broadcast updates and transition alerts at `/ws/queues`. The dashboard uses the socket when available and retains REST polling as its fallback.

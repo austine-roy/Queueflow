@@ -3,7 +3,6 @@
 import asyncio
 import random
 from abc import ABC, abstractmethod
-from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import select
@@ -12,9 +11,8 @@ from app.core.config import Settings
 from app.core.database import SessionLocal
 from app.models.queue import Queue
 from app.realtime.websocket_manager import WebSocketManager
-from app.schemas.alert import AlertRead
 from app.schemas.measurement import MeasurementCreate
-from app.schemas.realtime import AlertEvent, QueueUpdateEvent, RealtimeQueue
+from app.realtime.publisher import publish_measurement
 from app.services.measurement_service import record_measurement
 
 
@@ -45,10 +43,7 @@ class SimulatorProvider(QueueDataProvider):
                 if count == queue.current_count:
                     continue
                 result = record_measurement(session, queue, MeasurementCreate(person_count=count, density=count / queue.capacity), self.settings)
-                event = QueueUpdateEvent(queue=RealtimeQueue(id=queue.id, name=queue.name, current_count=queue.current_count, density=queue.density, estimated_wait_time=queue.estimated_wait_time, status=queue.status, timestamp=datetime.now(timezone.utc)))
-                await self.websocket_manager.broadcast(event.model_dump(mode="json"))
-                if result.alert is not None:
-                    await self.websocket_manager.broadcast(AlertEvent(alert=AlertRead.model_validate(result.alert)).model_dump(mode="json"))
+                await publish_measurement(result, self.websocket_manager)
 
     async def run(self) -> None:
         self._running = True
