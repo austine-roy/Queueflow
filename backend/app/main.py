@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import alerts, analytics, auth, cameras, health, measurements, queues, realtime
 from app.core.config import get_settings
 from app.core.observability import request_observability
+from app.core.security import security_headers
 from app.realtime.simulator import SimulatorProvider
 
 settings = get_settings()
@@ -37,6 +38,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.middleware("http")(request_observability)
+app.middleware("http")(security_headers)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.frontend_origin],

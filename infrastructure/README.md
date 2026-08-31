@@ -27,6 +27,25 @@ docker compose down
 
 `docker compose down -v` also removes the persisted PostgreSQL volume and should only be used when data deletion is intended.
 
+## Security, backups, and recovery
+
+Compose runs the API as a non-root user, prevents privilege escalation, and binds PostgreSQL only to `127.0.0.1`; use the API rather than exposing the database publicly. Login attempts are limited by `AUTH_LOGIN_RATE_LIMIT_ATTEMPTS` (default `5`) per `AUTH_LOGIN_RATE_LIMIT_WINDOW_SECONDS` (default `60`).
+
+Create a portable backup without stopping the stack:
+
+```bash
+docker compose exec -T postgres pg_dump -U queueflow -d queueflow -Fc > queueflow-backup.dump
+```
+
+Restore only into an isolated replacement database or a confirmed recovery environment. This overwrites objects in the target database:
+
+```bash
+docker compose exec -T postgres createdb -U queueflow queueflow_recovery
+docker compose exec -T postgres pg_restore -U queueflow -d queueflow_recovery --clean --if-exists < queueflow-backup.dump
+```
+
+Dependency audit: `pip-audit -r backend/requirements.txt` and `npm audit --omit=dev` should be run during releases. No dependency upgrades are made automatically because QueueFlow uses bounded version ranges and upgrades require compatibility verification.
+
 `/api/health` is a liveness probe; `/api/ready` also checks PostgreSQL. `/api/metrics` exposes lightweight JSON request/error, WebSocket, observation, and latency counters for operational inspection. Backend logs are structured JSON and omit credentials, tokens, and secrets.
 
 ## Configuration

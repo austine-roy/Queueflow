@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     queueflow_simulation_record_measurements: bool = True
     auth_secret_key: SecretStr = Field(min_length=32)
     auth_access_token_minutes: PositiveInt = Field(default=30)
+    auth_login_rate_limit_attempts: PositiveInt = Field(default=5)
+    auth_login_rate_limit_window_seconds: PositiveInt = Field(default=60)
     auth_bootstrap_admin_email: Optional[str] = None
     auth_bootstrap_admin_password: Optional[SecretStr] = None
 

@@ -1,6 +1,6 @@
 """Login, current-user, and account-management endpoints."""
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_current_user, require_roles
@@ -11,13 +11,15 @@ from app.models.user import User
 from app.schemas.auth import LoginRequest, TokenRead, UserCreate, UserRead, UserUpdate
 from app.services.auth_service import create_access_token, hash_password, verify_password
 from app.core.observability import log
+from app.core.security import login_rate_limiter
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 users_router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post("/login", response_model=TokenRead, summary="Log in")
-def login(payload: LoginRequest, session: Session = Depends(get_db)) -> TokenRead:
+def login(payload: LoginRequest, request: Request, session: Session = Depends(get_db)) -> TokenRead:
+    login_rate_limiter.check(request.client.host if request.client else "unknown")
     user = session.query(User).filter(User.email == payload.email.lower()).one_or_none()
     if user is None or not user.is_active or not verify_password(payload.password, user.password_hash):
         log("login_failed")

@@ -1,6 +1,7 @@
 """Authentication and role-based access-control tests."""
 
 import pytest
+import time
 from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 from sqlalchemy.orm import Session
@@ -10,6 +11,8 @@ from app.models.enums import UserRole
 from app.models.location import Location
 from app.models.user import User
 from app.services.auth_service import create_access_token, hash_password
+from app.core.security import LoginRateLimiter
+from app.core.config import get_settings
 
 
 def authorization_for(user: User) -> dict[str, str]:
@@ -40,6 +43,28 @@ def test_login_me_logout_and_invalid_credentials(client: TestClient) -> None:
     invalid = client.post("/api/auth/login", json={"email": "admin@example.com", "password": "wrong-password"})
     assert invalid.status_code == 401
     assert invalid.json()["detail"] == "Invalid email or password"
+
+
+def test_login_rate_limiter_returns_429_and_expires(monkeypatch: pytest.MonkeyPatch) -> None:
+    settings = get_settings()
+    monkeypatch.setattr(settings, "auth_login_rate_limit_attempts", 2)
+    monkeypatch.setattr(settings, "auth_login_rate_limit_window_seconds", 1)
+    limiter = LoginRateLimiter()
+    limiter.check("test-client")
+    limiter.check("test-client")
+    with pytest.raises(Exception) as limited:
+        limiter.check("test-client")
+    assert limited.value.status_code == 429
+    assert limited.value.headers["Retry-After"] == "1"
+    time.sleep(1.05)
+    limiter.check("test-client")
+
+
+def test_security_headers_are_present(client: TestClient) -> None:
+    response = client.get("/api/health")
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert response.headers["x-frame-options"] == "DENY"
+    assert "camera=()" in response.headers["permissions-policy"]
 
 
 def test_protected_endpoint_requires_a_valid_token(client: TestClient) -> None:

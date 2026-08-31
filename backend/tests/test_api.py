@@ -1,6 +1,7 @@
 """API behavior tests using a temporary SQLite database."""
 
 import json
+import logging
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
@@ -47,6 +48,7 @@ def test_readiness_returns_503_when_database_is_unavailable(client: TestClient) 
 
 
 def test_request_logging_and_request_ids_are_safe(client: TestClient, caplog: pytest.LogCaptureFixture) -> None:
+    logging.getLogger("queueflow").propagate = True
     caplog.set_level("INFO", logger="queueflow")
     response = client.post("/api/auth/login", headers={"X-Request-ID": "request-123", "Authorization": "Bearer private-token"}, json={"email": "admin@example.com", "password": "CorrectHorseBatteryStaple!"})
     assert response.headers["x-request-id"] == "request-123"
@@ -57,6 +59,7 @@ def test_request_logging_and_request_ids_are_safe(client: TestClient, caplog: py
     assert "CorrectHorseBatteryStaple!" not in records
     assert "private-token" not in records
     assert "Authorization" not in records
+    logging.getLogger("queueflow").propagate = False
 
 
 def test_api_allows_configured_frontend_origin(client: TestClient) -> None:

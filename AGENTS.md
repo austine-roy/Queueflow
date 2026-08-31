@@ -26,13 +26,16 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 8 — COMPLETED & RUNTIME VERIFIED**
 - **Milestone 9 — COMPLETED & VERIFIED**
 - **Milestone 10 — COMPLETED & RUNTIME VERIFIED**
-- **Milestone 11 — CURRENT / SECURITY & PRODUCTION HARDENING**
+- **Milestone 11 — COMPLETED & VERIFIED**
+- **Milestone 12 — NEXT**
 
 **### Current Milestone**
 
-**Milestone 11 — Security & Production Hardening**
+**Milestone 12 — Next Development Phase**
 
-Milestones 1–10 are complete and verified. Milestone 11 is now the security and production hardening phase.
+Milestones 1–11 are complete and verified. Define Milestone 12 before implementation.
+
+Milestone 11 handoff: added production headers/HSTS, configurable login throttling, least-privilege Compose restrictions, localhost-only PostgreSQL exposure, and PostgreSQL backup/recovery guidance. Verification passed: 46 backend/AI tests, 8 frontend tests, lint/build, dependency audit (two unresolved moderate React Router advisories requiring a breaking v7 upgrade), and fresh isolated Docker stacks verifying health/readiness/metrics, headers/HSTS, login throttling, structured logs, and authenticated/rejected WebSockets. Commit pending this handoff.
 
 The goal is to make QueueFlow easier to operate, diagnose, and monitor in production without disrupting the completed functionality from Milestones 1–10.
 
