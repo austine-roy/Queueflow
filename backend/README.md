@@ -52,6 +52,14 @@ Set `QUEUEFLOW_SIMULATION_ENABLED=true` to start the development-only simulator 
 
 Each event is JSON with a `type` of `queue_update` or `alert`. Measurements submitted to the REST API also broadcast through this same path. Alerts are emitted only when a queue enters a `CROWDED` or `CRITICAL` state, preventing repeated alerts while it remains in that state.
 
+## Advanced queue operations
+
+- `GET /api/analytics/queues` returns persisted per-queue measurement history, peak population, and average wait time in one response for dashboard analytics.
+- `GET /api/alerts?active=true` filters active transition alerts; `POST /api/alerts/{alert_id}/resolve` resolves one explicitly. A return to a non-concerning queue status resolves its active transition alerts automatically.
+- `GET /api/cameras?queue_id=<id>&active=true` supports operational views across multiple camera sources.
+
+Wait estimates use the configured service rate until historical measurements show repeated queue decreases. The resulting observed departure rate then informs the estimate; it remains a transparent heuristic rather than an ML prediction.
+
 ## Camera observation ingestion
 
 Configure a camera with `POST /api/cameras`, assigning it to a queue at the same location. An external video/AI worker then submits each analyzed observation without holding an API request open for video processing:

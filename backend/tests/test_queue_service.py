@@ -1,10 +1,11 @@
 """Unit tests for reusable queue rules."""
 
 import pytest
+from datetime import datetime, timedelta
 
 from app.core.config import Settings
 from app.models.enums import QueueStatus
-from app.services.queue_service import calculate_status, estimate_wait_time
+from app.services.queue_service import calculate_status, estimate_wait_from_history, estimate_wait_time
 
 
 @pytest.fixture()
@@ -32,3 +33,15 @@ def test_estimate_wait_time() -> None:
 def test_estimate_wait_time_rejects_invalid_service_rate() -> None:
     with pytest.raises(ValueError, match="greater than zero"):
         estimate_wait_time(12, 0)
+
+
+def test_historical_wait_uses_observed_departure_rate() -> None:
+    start = datetime(2026, 9, 1, 9, 0)
+    observations = [(start, 20), (start + timedelta(minutes=5), 10), (start + timedelta(minutes=10), 4)]
+    assert estimate_wait_from_history(4, 2, observations) == 2.5
+
+
+def test_historical_wait_falls_back_without_a_departure_signal() -> None:
+    start = datetime(2026, 9, 1, 9, 0)
+    observations = [(start, 2), (start + timedelta(minutes=5), 4)]
+    assert estimate_wait_from_history(4, 2, observations) == 2

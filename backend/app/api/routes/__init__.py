@@ -1,4 +1,4 @@
 """Route modules."""
-from . import cameras
+from . import analytics, cameras
 
-__all__ = ["cameras"]
+__all__ = ["analytics", "cameras"]

@@ -33,3 +33,13 @@ export interface Alert {
   created_at: string;
   resolved_at: string | null;
 }
+
+export interface QueueAnalytics {
+  queue_id: number;
+  queue_name: string;
+  measurement_count: number;
+  average_wait_time: number;
+  peak_person_count: number;
+  latest_measurement_at: string | null;
+  measurements: Measurement[];
+}

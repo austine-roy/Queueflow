@@ -1,5 +1,8 @@
 """Shared queue business rules."""
 
+from datetime import datetime
+from typing import Sequence
+
 from app.core.config import Settings
 from app.models.enums import QueueStatus
 
@@ -27,3 +30,20 @@ def estimate_wait_time(current_count: int, service_rate_per_minute: float) -> fl
     if current_count < 0:
         raise ValueError("current_count cannot be negative")
     return current_count / service_rate_per_minute
+
+
+def estimate_wait_from_history(
+    current_count: int,
+    default_service_rate_per_minute: float,
+    observations: Sequence[tuple[datetime, int]],
+) -> float:
+    """Use observed queue decreases as a service-rate signal, with a safe fallback."""
+
+    service_rates: list[float] = []
+    for (earlier_time, earlier_count), (later_time, later_count) in zip(observations, observations[1:]):
+        elapsed_minutes = (later_time - earlier_time).total_seconds() / 60
+        served = earlier_count - later_count
+        if elapsed_minutes > 0 and served > 0:
+            service_rates.append(served / elapsed_minutes)
+    service_rate = sum(service_rates) / len(service_rates) if service_rates else default_service_rate_per_minute
+    return estimate_wait_time(current_count, service_rate)

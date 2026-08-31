@@ -34,7 +34,7 @@
 
 ## Milestone 7 — Advanced capabilities
 
-- [ ] Add alerts, historical analytics, multiple queues/cameras, and improved wait-time prediction.
+- [x] Add alert lifecycle management, server-side historical analytics, multi-camera filtering, and history-informed wait estimates.
 
 ## Milestone 8 — Deployment
 

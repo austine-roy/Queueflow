@@ -22,33 +22,27 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 4 — COMPLETED**
 - **Milestone 5 — COMPLETED**
 - **Milestone 6 — COMPLETED**
-- **Milestone 7 — CURRENT / NEXT DEVELOPMENT TARGET**
+- **Milestone 7 — COMPLETED**
+- **Milestone 8 — CURRENT / NEXT DEVELOPMENT TARGET**
 
 The exact implementation of completed milestones must always be verified against the actual codebase rather than assumed from this document.
 
 ### Current Milestone
 
-**Milestone 7 — Next Development Phase**
+**Milestone 8 — Deployment and Production Verification**
 
-The exact scope of Milestone 7 must be verified from the existing project documentation, Git history, and current implementation before development begins.
+The exact scope of Milestone 8 must be verified from the existing project documentation, Git history, and current implementation before development begins.
 
-Do not assume Milestone 7 requirements without inspecting the repository.
+Do not assume Milestone 8 requirements without inspecting the repository.
 
 Planned scope:
 
-- FastAPI WebSocket endpoint for live queue updates:
-  `/ws/queues`
-- WebSocket connection manager.
-- Configurable gradual multi-queue simulator.
-- Persist simulated measurements.
-- Live React frontend updates.
-- WebSocket reconnection handling.
-- Connection/status fallback when the live connection is unavailable.
-- Transition-based queue alerts.
-- Appropriate backend/frontend tests.
-- Documentation updates.
+- Production Docker Compose services and environment configuration.
+- Health checks, startup verification, and deployment documentation.
+- Secure production defaults for CORS, secrets, and optional simulation.
+- End-to-end verification of database, API, dashboard, and real-time delivery.
 
-Before implementing Milestone 4, inspect the repository and determine which parts, if any, already exist. Do not duplicate existing functionality.
+Before implementing Milestone 8, inspect the repository and determine which parts, if any, already exist. Do not duplicate existing functionality.
 
 ---
 
@@ -517,12 +511,13 @@ Milestone 3 — Completed
 Milestone 4 — Completed
 Milestone 5 — Completed
 Milestone 6 — Completed
+Milestone 7 — Completed
 ```
 
 ### Current
 
 ```text
-Milestone 7 — Next Development Phase
+Milestone 8 — Deployment and Production Verification
 ```
 
 ### Known Issues
@@ -538,15 +533,10 @@ No issues documented here yet.
 Update this section as work progresses.
 
 ```text
-1. Verify the completed Milestones 1–6 implementation.
-2. Inspect the repository documentation and Git history for Milestone 7 requirements.
-3. Audit any existing Milestone 7 work.
-4. Implement the next Milestone 7 task incrementally.
-5. Add/complete relevant tests.
-6. Verify frontend/backend/AI/database integration where applicable.
-7. Update documentation.
-8. Update this AGENTS.md.
-9. Commit and push the completed work.
+1. Verify the completed Milestones 1–7 implementation.
+2. Inspect existing infrastructure and deployment configuration.
+3. Add production-safe Compose configuration and health checks.
+4. Run end-to-end deployment verification.
 ```
 
 ---
@@ -560,6 +550,27 @@ The next Codex session must treat Milestones 1–6 as completed unless the repos
 Do not recreate Milestone 4.
 
 Before beginning Milestone 5, inspect the actual codebase, tests, documentation, and Git history to determine the exact remaining scope.
+
+---
+
+## 22. Milestone 7 Completion
+
+Milestone 7 has been completed.
+
+Completed:
+
+- Added server-side queue-history analytics, alert lifecycle filters/resolution, and multi-camera filtering.
+- Added history-informed wait estimates with a configured service-rate fallback.
+- Updated the dashboard to use the consolidated analytics endpoint.
+
+Tested:
+
+- Backend and AI: 36 tests passed.
+- Frontend tests, lint, and production build passed.
+
+Next Task:
+
+Implement Milestone 8 deployment configuration and production verification.
 
 ---
 

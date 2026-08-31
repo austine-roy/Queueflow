@@ -1,6 +1,7 @@
 """Measurement persistence and queue-state updates."""
 
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 from sqlalchemy.orm import Session
 
@@ -11,7 +12,7 @@ from app.models.enums import AlertSeverity
 from app.models.measurement import QueueMeasurement
 from app.models.queue import Queue
 from app.schemas.measurement import MeasurementCreate
-from app.services.queue_service import calculate_status, estimate_wait_time
+from app.services.queue_service import calculate_status, estimate_wait_from_history
 
 
 @dataclass
@@ -30,7 +31,16 @@ def record_measurement(session: Session, queue: Queue, payload: MeasurementCreat
         is_closed=queue.status == QueueStatus.CLOSED,
         settings=settings,
     )
-    wait_time = estimate_wait_time(payload.person_count, settings.default_service_rate_per_minute)
+    previous_measurements = list(
+        session.query(QueueMeasurement)
+        .filter(QueueMeasurement.queue_id == queue.id)
+        .order_by(QueueMeasurement.recorded_at.desc(), QueueMeasurement.id.desc())
+        .limit(20)
+        .all()
+    )
+    history = [(item.recorded_at.replace(tzinfo=None), item.person_count) for item in reversed(previous_measurements)]
+    history.append((datetime.utcnow(), payload.person_count))
+    wait_time = estimate_wait_from_history(payload.person_count, settings.default_service_rate_per_minute, history)
     measurement = QueueMeasurement(
         queue_id=queue.id,
         person_count=payload.person_count,
@@ -44,6 +54,7 @@ def record_measurement(session: Session, queue: Queue, payload: MeasurementCreat
     queue.status = status
     session.add(measurement)
     alert = create_transition_alert(queue, previous_status, status)
+    resolve_transition_alerts(session, queue.id, status)
     if alert is not None:
         session.add(alert)
     session.commit()
@@ -60,3 +71,13 @@ def create_transition_alert(queue: Queue, previous: QueueStatus, current: QueueS
         return None
     severity = AlertSeverity.CRITICAL if current == QueueStatus.CRITICAL else AlertSeverity.WARNING
     return Alert(queue_id=queue.id, type=f"QUEUE_{current.value}", message=f"{queue.name} entered {current.value} status.", severity=severity)
+
+
+def resolve_transition_alerts(session: Session, queue_id: int, status: QueueStatus) -> None:
+    """Resolve active crowding alerts once the queue returns to a non-concerning state."""
+
+    if status in {QueueStatus.CROWDED, QueueStatus.CRITICAL}:
+        return
+    for alert in session.query(Alert).filter(Alert.queue_id == queue_id, Alert.is_active.is_(True)).all():
+        alert.is_active = False
+        alert.resolved_at = datetime.utcnow()

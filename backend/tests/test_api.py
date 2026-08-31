@@ -101,3 +101,49 @@ def test_camera_rejects_queue_from_another_location(client: TestClient, session:
     queue = client.post("/api/queues", json={"name": "Security", "location_id": first.id, "capacity": 20}).json()
     response = client.post("/api/cameras", json={"name": "Entrance", "location_id": second.id, "queue_id": queue["id"], "source_type": "VIDEO_FILE"})
     assert response.status_code == 422
+
+
+def test_alert_lifecycle_and_filters(client: TestClient, session: Session) -> None:
+    location = create_location(session)
+    queue = client.post("/api/queues", json={"name": "Security", "location_id": location.id, "capacity": 20}).json()
+    client.post(f"/api/queues/{queue['id']}/measurements", json={"person_count": 16, "density": 0.8})
+    active = client.get("/api/alerts?active=true&queue_id=" + str(queue["id"])).json()
+    assert len(active) == 1
+    resolved = client.post(f"/api/alerts/{active[0]['id']}/resolve")
+    assert resolved.status_code == 200
+    assert resolved.json()["is_active"] is False
+    assert len(client.get("/api/alerts?active=true").json()) == 0
+    assert len(client.get("/api/alerts?active=false").json()) == 1
+
+
+def test_queue_recovery_resolves_active_transition_alert(client: TestClient, session: Session) -> None:
+    location = create_location(session)
+    queue = client.post("/api/queues", json={"name": "Security", "location_id": location.id, "capacity": 20}).json()
+    client.post(f"/api/queues/{queue['id']}/measurements", json={"person_count": 16, "density": 0.8})
+    client.post(f"/api/queues/{queue['id']}/measurements", json={"person_count": 4, "density": 0.2})
+    assert len(client.get("/api/alerts?active=true").json()) == 0
+    resolved = client.get("/api/alerts?active=false").json()
+    assert len(resolved) == 1
+    assert resolved[0]["resolved_at"] is not None
+
+
+def test_analytics_returns_persisted_history(client: TestClient, session: Session) -> None:
+    location = create_location(session)
+    queue = client.post("/api/queues", json={"name": "Security", "location_id": location.id, "capacity": 20}).json()
+    client.post(f"/api/queues/{queue['id']}/measurements", json={"person_count": 4, "density": 0.2})
+    client.post(f"/api/queues/{queue['id']}/measurements", json={"person_count": 8, "density": 0.4})
+    response = client.get("/api/analytics/queues")
+    assert response.status_code == 200
+    analytics = response.json()[0]
+    assert analytics["queue_name"] == "Security"
+    assert analytics["measurement_count"] == 2
+    assert analytics["peak_person_count"] == 8
+    assert len(analytics["measurements"]) == 2
+
+
+def test_camera_list_can_filter_by_queue_and_active_state(client: TestClient, session: Session) -> None:
+    location = create_location(session)
+    queue = client.post("/api/queues", json={"name": "Security", "location_id": location.id, "capacity": 20}).json()
+    active = client.post("/api/cameras", json={"name": "Active", "location_id": location.id, "queue_id": queue["id"], "source_type": "VIDEO_FILE"}).json()
+    client.post("/api/cameras", json={"name": "Inactive", "location_id": location.id, "queue_id": queue["id"], "source_type": "VIDEO_FILE", "is_active": False})
+    assert [item["id"] for item in client.get(f"/api/cameras?queue_id={queue['id']}&active=true").json()] == [active["id"]]

@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Alert, Measurement, Queue } from "../types/api";
+import type { Alert, Measurement, Queue, QueueAnalytics } from "../types/api";
 
 const savedApiUrlKey = "queueflow.apiBaseUrl";
 
@@ -29,4 +29,8 @@ export async function getMeasurements(queueId: number): Promise<Measurement[]> {
 
 export async function getAlerts(): Promise<Alert[]> {
   return (await apiClient().get<Alert[]>("/api/alerts")).data;
+}
+
+export async function getQueueAnalytics(): Promise<QueueAnalytics[]> {
+  return (await apiClient().get<QueueAnalytics[]>("/api/analytics/queues")).data;
 }

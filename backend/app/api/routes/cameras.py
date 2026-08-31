@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
@@ -37,8 +39,20 @@ def validate_camera_assignment(session: Session, location_id: int, queue_id: int
 
 
 @router.get("", response_model=list[CameraRead], summary="List configured cameras")
-def list_cameras(session: Session = Depends(get_db)) -> list[Camera]:
-    return list(session.query(Camera).order_by(Camera.id).all())
+def list_cameras(
+    location_id: Optional[int] = Query(default=None, gt=0),
+    queue_id: Optional[int] = Query(default=None, gt=0),
+    active: Optional[bool] = Query(default=None),
+    session: Session = Depends(get_db),
+) -> list[Camera]:
+    query = session.query(Camera)
+    if location_id is not None:
+        query = query.filter(Camera.location_id == location_id)
+    if queue_id is not None:
+        query = query.filter(Camera.queue_id == queue_id)
+    if active is not None:
+        query = query.filter(Camera.is_active == active)
+    return list(query.order_by(Camera.id).all())
 
 
 @router.post("", response_model=CameraRead, status_code=status.HTTP_201_CREATED, summary="Configure a camera")
