@@ -34,6 +34,8 @@ This is an existing project. Continue development incrementally. Do not recreate
 
 Milestones 1–10 are complete and verified. Define Milestone 11 from the repository roadmap and requirements before implementation.
 
+Milestone 10 handoff: structured JSON logs, request IDs, PostgreSQL readiness, and Prometheus-compatible in-process metrics were implemented. Verification passed: 44 backend/AI tests, 8 frontend tests, frontend lint/build, and a fresh Docker Compose stack with healthy PostgreSQL, health/readiness/metrics responses, and request-ID JSON logs. Known non-blocking warnings: React Router future flags, zero-size test charts, and Vite’s existing bundle-size warning. Commit: `e01d4166`.
+
 The goal is to make QueueFlow easier to operate, diagnose, and monitor in production without disrupting the completed functionality from Milestones 1–9.
 
 Scope:
