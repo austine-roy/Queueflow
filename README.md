@@ -1,6 +1,6 @@
 # QueueFlow
 
-QueueFlow is an AI-assisted queue monitoring and management system. It is being developed in small, independently testable milestones. Milestone 2 provides the backend/database foundation; the frontend and computer-vision pipeline are intentionally not implemented yet.
+QueueFlow is an AI-assisted queue monitoring and management system. It is being developed in small, independently testable milestones. The backend/database foundation, dashboard, real-time layer, and a video-analysis baseline are implemented; database/live integration of camera observations follows in a later milestone.
 
 ## Planned capabilities
 
@@ -59,4 +59,4 @@ The current work plan is in [docs/development/roadmap.md](docs/development/roadm
 
 ## Status
 
-Milestone 4 — Real-Time Queue Layer: complete. The backend can simulate gradual multi-queue changes, persist each measurement, and broadcast updates and transition alerts at `/ws/queues`. The dashboard uses the socket when available and retains REST polling as its fallback.
+Milestone 5 — AI foundations: complete. QueueFlow now includes a replaceable video-file pipeline for person detection, centroid tracking, polygon queue regions, counting, and density observations. See [the AI module guide](ai/README.md); persistence and live delivery of these observations are planned for Milestone 6.

@@ -26,7 +26,7 @@
 
 ## Milestone 5 — AI foundations
 
-- [ ] Add video-file detection, tracking, queue regions, counting, and density tests.
+- [x] Add video-file detection, tracking, queue regions, counting, and density tests.
 
 ## Milestone 6 — Integration
 

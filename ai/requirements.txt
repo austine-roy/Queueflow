@@ -1,0 +1,2 @@
+# Needed only when running VideoQueueAnalyzer against real video files.
+opencv-python-headless>=4.10,<5.0
