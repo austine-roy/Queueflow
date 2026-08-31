@@ -25,18 +25,16 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 7 — COMPLETED**
 - **Milestone 8 — COMPLETED & RUNTIME VERIFIED**
 - **Milestone 9 — COMPLETED & VERIFIED**
-- **Milestone 10 — COMPLETED & VERIFIED**
-- **Milestone 11 — NEXT DEVELOPMENT TARGET**
+- **Milestone 10 — COMPLETED & RUNTIME VERIFIED**
+- **Milestone 11 — CURRENT / SECURITY & PRODUCTION HARDENING**
 
 **### Current Milestone**
 
-**Milestone 11 — Next Development Phase**
+**Milestone 11 — Security & Production Hardening**
 
-Milestones 1–10 are complete and verified. Define Milestone 11 from the repository roadmap and requirements before implementation.
+Milestones 1–10 are complete and verified. Milestone 11 is now the security and production hardening phase.
 
-Milestone 10 handoff: structured JSON logs, request IDs, PostgreSQL readiness, and Prometheus-compatible in-process metrics were implemented. Verification passed: 44 backend/AI tests, 8 frontend tests, frontend lint/build, and a fresh Docker Compose stack with healthy PostgreSQL, health/readiness/metrics responses, and request-ID JSON logs. Known non-blocking warnings: React Router future flags, zero-size test charts, and Vite’s existing bundle-size warning. Commit: `e01d4166`.
-
-The goal is to make QueueFlow easier to operate, diagnose, and monitor in production without disrupting the completed functionality from Milestones 1–9.
+The goal is to make QueueFlow easier to operate, diagnose, and monitor in production without disrupting the completed functionality from Milestones 1–10.
 
 Scope:
 
@@ -85,7 +83,7 @@ Do not introduce unnecessary infrastructure. Inspect the existing deployment and
 
 **## 3. Primary Development Rule**
 
-**\*\*Continue from the existing codebase. Do not restart or recreate Milestones 1–9.\*\***
+**\*\*Continue from the existing codebase. Do not restart or recreate Milestones 1–10.\*\***
 
 Before making changes:
 
@@ -101,7 +99,7 @@ Before making changes:
 
 6\. Identify the current branch.
 
-7\. Verify the actual implementation of Milestones 1–9.
+7\. Verify the actual implementation of Milestones 1–10.
 
 8\. Determine the current milestone and remaining work from the repository roadmap and documentation.
 
@@ -747,12 +745,13 @@ Frontend tests may emit existing React Router future-flag and zero-size chart wa
 **### Next Steps**
 
 ```text
-1. Verify the completed Milestones 1–9 implementation.
-2. Inspect the existing deployment, logging, health checks, and application architecture.
-3. Implement Milestone 10 observability and production monitoring incrementally.
-4. Add tests and perform production-stack verification.
-5. Update documentation and AGENTS.md.
-6. Preserve all completed Milestones 1–9.
+1. Verify the completed Milestones 1–10 implementation.
+2. Inspect the existing authentication, API, Docker, database, and configuration security.
+3. Implement Milestone 11 security and production hardening incrementally.
+4. Add focused security tests and run the full verification suite.
+5. Perform production Docker/runtime verification.
+6. Update documentation and AGENTS.md.
+7. Commit and push the completed work.
 ```
 
 **---**
@@ -830,7 +829,7 @@ Milestone 10 is defined as the production observability and monitoring phase.
 
 Implement structured logging, health/readiness monitoring, useful operational metrics, production monitoring/troubleshooting support, error visibility, deployment observability, relevant tests, and documentation.
 
-Do not introduce unnecessary infrastructure. Preserve the completed Milestones 1–9.
+Do not introduce unnecessary infrastructure. Preserve the completed Milestones 1–10.
 
 ---
 
@@ -862,11 +861,11 @@ Every new Codex session should:
 4. Run git status.
 5. Inspect the current branch.
 6. Inspect recent commits.
-7. Verify Milestones 1–9 against the actual codebase.
-8. Inspect the roadmap and existing deployment/observability implementation for Milestone 10.
-9. Confirm the Milestone 10 scope: Observability & Production Monitoring.
+7. Verify Milestones 1–10 against the actual codebase.
+8. Inspect the roadmap and current security/deployment implementation for Milestone 11.
+9. Confirm the Milestone 11 scope: Security & Production Hardening.
 10. Present a concise implementation plan based on the actual codebase before major changes.
-11. Implement only the approved Milestone 10 scope.
+11. Implement only the approved Milestone 11 scope.
 12. Run relevant tests and verification, including Docker smoke testing when available.
 13. Update documentation.
 14. Update AGENTS.md.
@@ -878,7 +877,7 @@ Never restart the project.
 
 Never recreate completed milestones unless a verified bug requires it.
 
-Do not expand Milestone 10 beyond the approved observability and production monitoring scope without explicit instruction.
+Do not expand Milestone 11 beyond the approved security and production hardening scope without explicit instruction.
 
 ---
 
