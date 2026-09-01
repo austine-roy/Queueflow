@@ -28,13 +28,16 @@ This is an existing project. Continue development incrementally. Do not recreate
 - **Milestone 10 — COMPLETED & RUNTIME VERIFIED**
 - **Milestone 11 — COMPLETED & RUNTIME VERIFIED**
 - **Milestone 12 — COMPLETED & RUNTIME VERIFIED**
-- **Milestone 13 — CURRENT / FINAL QA & PRODUCTION RELEASE**
+- **Milestone 13 — COMPLETED & RELEASE VERIFIED**
+- **Milestone 14 — FUTURE / POST-RELEASE MAINTENANCE**
 
 **### Current Milestone**
 
-**Milestone 13 — Final QA & Production Release**
+**Milestone 14 — Post-Release Operations & Maintenance (FUTURE)**
 
-Milestones 1–12 are complete and verified. Milestone 13 is the final QA and production-release phase.
+Milestones 1–13 are completed and release verified. Milestone 14 is defined but must not begin until post-release operation requires maintenance work.
+
+Milestone 13 final handoff: backend/AI suite 50 passed; frontend suite 8 passed; lint and production build passed. Fresh isolated production Compose verification built the images and confirmed PostgreSQL health, FastAPI health/readiness/metrics, and Nginx startup. Authentication/RBAC, WebSocket authentication, security headers/HSTS, rate limiting, structured logs, backup/recovery guidance, and Milestone 12 regression baselines were verified in the preceding release verification sessions. Backup/restore was documented; no destructive restore was performed against project data. Known non-blocking limitations: React Router has two moderate advisories requiring a breaking v7 migration, frontend tests emit React Router/zero-size-chart warnings, and the single-process performance baselines are not production capacity guarantees. Final release-state commit pending this handoff.
 
 The goal is to validate the complete QueueFlow system end-to-end, resolve release-blocking issues, finalize documentation, and prepare the project for production/demo delivery.
 

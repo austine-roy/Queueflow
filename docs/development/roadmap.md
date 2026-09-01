@@ -59,3 +59,9 @@
 - [x] Add an index-backed SQL window query for limited per-queue analytics history while preserving total counts.
 - [x] Verify a 20-client WebSocket broadcast/disconnect baseline and a 20-observation persistence baseline.
 - [x] Verify the migration and authenticated multi-client behavior in a fresh production Compose stack.
+
+## Milestone 13 — Final QA & production release
+
+- [x] Run complete backend/AI and frontend release checks.
+- [x] Verify a fresh production Compose stack, PostgreSQL health, backend readiness, Nginx startup, and operational metrics.
+- [x] Confirm release readiness without introducing new features.

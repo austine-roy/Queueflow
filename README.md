@@ -64,3 +64,5 @@ Milestone 10 — Observability and production monitoring verified. The backend p
 Milestone 11 — Security hardening adds production HTTP security headers, HSTS, login rate limiting, least-privilege Compose settings, and PostgreSQL recovery guidance. See the deployment runbook for configuration and backup procedures.
 
 Milestone 12 — Performance and reliability adds an index-backed SQL history window for analytics, a 20-client WebSocket reliability baseline, and a 20-observation ingestion baseline. These are regression baselines, not production capacity guarantees.
+
+Milestone 13 — Final release QA verified the complete automated suites and a fresh production Compose deployment (PostgreSQL, FastAPI, and Nginx), including health, readiness, and metrics. QueueFlow is release complete; Milestone 14 is reserved for post-release maintenance.
