@@ -77,10 +77,11 @@ def test_protected_endpoint_requires_a_valid_token(client: TestClient) -> None:
 
 
 def test_cors_allows_bearer_authorization_header(client: TestClient) -> None:
+    origin = get_settings().frontend_origin
     response = client.options(
         "/api/queues",
         headers={
-            "Origin": "http://localhost:5173",
+            "Origin": origin,
             "Access-Control-Request-Method": "GET",
             "Access-Control-Request-Headers": "authorization",
         },

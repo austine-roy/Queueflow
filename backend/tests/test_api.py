@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.models.location import Location
+from app.core.config import get_settings
 from app.core.database import get_db
 from app.main import app
 
@@ -64,8 +65,9 @@ def test_request_logging_and_request_ids_are_safe(client: TestClient, caplog: py
 
 
 def test_api_allows_configured_frontend_origin(client: TestClient) -> None:
-    response = client.get("/api/health", headers={"Origin": "http://localhost:5173"})
-    assert response.headers["access-control-allow-origin"] == "http://localhost:5173"
+    origin = get_settings().frontend_origin
+    response = client.get("/api/health", headers={"Origin": origin})
+    assert response.headers["access-control-allow-origin"] == origin
 
 
 def test_queue_crud(client: TestClient, session: Session) -> None:
@@ -90,6 +92,14 @@ def test_queue_crud(client: TestClient, session: Session) -> None:
     deleted = client.delete(f"/api/queues/{queue['id']}")
     assert deleted.status_code == 204
     assert client.get(f"/api/queues/{queue['id']}").status_code == 404
+
+
+def test_locations_are_available_for_queue_setup(client: TestClient, session: Session) -> None:
+    location = create_location(session)
+    response = client.get("/api/locations")
+    assert response.status_code == 200
+    assert response.json()[0]["id"] == location.id
+    assert response.json()[0]["name"] == "Test location"
 
 
 def test_queue_validation_and_missing_location(client: TestClient) -> None:
@@ -130,6 +140,23 @@ def test_camera_configuration_and_observation_ingestion(client: TestClient, sess
     observation = client.post(f"/api/cameras/{camera.json()['id']}/observations", json={"person_count": 16, "density": 0.8})
     assert observation.status_code == 200
     assert client.get(f"/api/queues/{queue['id']}").json()["status"] == "CROWDED"
+    assert len(client.get(f"/api/queues/{queue['id']}/measurements").json()) == 1
+
+
+def test_browser_camera_frame_analysis_persists_and_publishes_observation(client: TestClient, session: Session, monkeypatch: pytest.MonkeyPatch) -> None:
+    location = create_location(session)
+    queue = client.post("/api/queues", json={"name": "Live vision", "location_id": location.id, "capacity": 20}).json()
+    camera = client.post("/api/cameras", json={"name": "Browser camera", "location_id": location.id, "queue_id": queue["id"], "source_type": "WEBCAM"}).json()
+    monkeypatch.setattr("app.api.routes.cameras.camera_frame_analyzer.analyze", lambda _frame, _capacity: (8, 0.4))
+
+    response = client.post(f"/api/cameras/{camera['id']}/analyze-frame", json={"frame_data": "data:image/jpeg;base64,ZmFrZS1mcmFtZS1kYXRh"})
+    assert response.status_code == 200
+    assert response.json()["person_count"] == 8
+    assert response.json()["density"] == 0.4
+    assert response.json()["estimated_wait_time"] == 4
+    assert response.json()["status"] == "NORMAL"
+    updated_queue = client.get(f"/api/queues/{queue['id']}").json()
+    assert updated_queue["current_count"] == 8
     assert len(client.get(f"/api/queues/{queue['id']}/measurements").json()) == 1
 
 
@@ -209,6 +236,29 @@ def test_analytics_limits_history_in_database_while_preserving_total_count(clien
     assert analytics["measurement_count"] == 6
     assert len(analytics["measurements"]) == 2
     assert [item["person_count"] for item in analytics["measurements"]] == [4, 5]
+
+
+def test_queue_prediction_uses_history_and_has_a_safe_fallback(client: TestClient, session: Session) -> None:
+    location = create_location(session)
+    queue = client.post("/api/queues", json={"name": "Forecast", "location_id": location.id, "capacity": 100}).json()
+
+    fallback = client.get(f"/api/analytics/queues/{queue['id']}/prediction")
+    assert fallback.status_code == 200
+    assert fallback.json() == {
+        "queue_id": queue["id"],
+        "predicted_count": 0,
+        "model": "insufficient_history",
+        "measurement_count": 0,
+    }
+
+    for count in (2, 4, 6, 8, 10):
+        assert client.post(f"/api/queues/{queue['id']}/measurements", json={"person_count": count, "density": 0.2}).status_code == 201
+    prediction = client.get(f"/api/analytics/queues/{queue['id']}/prediction")
+    assert prediction.status_code == 200
+    assert prediction.json()["model"] == "random_forest"
+    assert prediction.json()["measurement_count"] == 5
+    assert isinstance(prediction.json()["predicted_count"], int)
+    assert prediction.json()["predicted_count"] >= 0
 
 
 def test_camera_list_can_filter_by_queue_and_active_state(client: TestClient, session: Session) -> None:

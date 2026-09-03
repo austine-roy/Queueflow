@@ -9,3 +9,12 @@ httpx>=0.27,<1.0
 pwdlib[argon2]>=0.2,<0.3
 PyJWT>=2.8,<3.0
 email-validator>=2.0,<3.0
+scikit-learn>=1.4,<2.0
+opencv-python-headless==4.10.0.84
+# Use the official CPU-only PyTorch wheel index.  The default PyPI wheel pulls
+# CUDA dependencies that are unnecessary for QueueFlow's server-side YOLOv8
+# inference and makes ARM64 production images substantially larger.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.0+cpu
+torchvision==0.29.0+cpu
+ultralytics>=8.3,<9.0

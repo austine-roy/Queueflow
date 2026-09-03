@@ -28,6 +28,8 @@ services:
       QUEUEFLOW_SIMULATION_ENABLED: "false"
       AUTH_SECRET_KEY: ${AUTH_SECRET_KEY:?Set AUTH_SECRET_KEY in .env}
       AUTH_ACCESS_TOKEN_MINUTES: ${AUTH_ACCESS_TOKEN_MINUTES:-30}
+      YOLO_MODEL_PATH: ${YOLO_MODEL_PATH:-yolov8n.pt}
+      YOLO_CONFIDENCE: ${YOLO_CONFIDENCE:-0.35}
     depends_on:
       postgres:
         condition: service_healthy

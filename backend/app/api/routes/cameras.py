@@ -17,7 +17,8 @@ from app.models.queue import Queue
 from app.core.observability import metrics, log
 from app.realtime.publisher import publish_measurement
 from app.realtime.websocket_manager import manager
-from app.schemas.camera import CameraCreate, CameraObservationCreate, CameraRead, CameraUpdate
+from app.schemas.camera import CameraAnalysisRead, CameraCreate, CameraFrameCreate, CameraObservationCreate, CameraRead, CameraUpdate
+from app.services.camera_analysis_service import camera_frame_analyzer
 from app.services.measurement_service import record_measurement
 
 router = APIRouter(prefix="/cameras", tags=["Cameras"])
@@ -105,3 +106,29 @@ async def ingest_observation(camera_id: int, payload: CameraObservationCreate, s
     log("camera_observation_recorded", camera_id=camera.id, queue_id=queue.id)
     await publish_measurement(record, manager)
     return CameraRead.model_validate(camera)
+
+
+@router.post("/{camera_id}/analyze-frame", response_model=CameraAnalysisRead, summary="Analyze a browser camera frame")
+async def analyze_camera_frame(camera_id: int, payload: CameraFrameCreate, session: Session = Depends(get_db), _: object = Depends(require_roles(UserRole.OPERATOR, UserRole.ADMIN))) -> CameraAnalysisRead:
+    """Count people in one sampled frame and publish the resulting observation."""
+
+    camera = get_camera_or_404(session, camera_id)
+    if not camera.is_active:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Camera is inactive")
+    if camera.queue_id is None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Camera is not assigned to a queue")
+    queue = session.get(Queue, camera.queue_id)
+    if queue is None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Camera queue is unavailable")
+    try:
+        person_count, density = camera_frame_analyzer.analyze(payload.frame_data, queue.capacity)
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(error)) from None
+    except RuntimeError:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Camera analysis is unavailable") from None
+    record = record_measurement(session, queue, CameraObservationCreate(person_count=person_count, density=density), get_settings())
+    metrics.observations += 1
+    log("camera_frame_analyzed", camera_id=camera.id, queue_id=queue.id, person_count=person_count)
+    await publish_measurement(record, manager)
+    measurement = record.measurement
+    return CameraAnalysisRead(camera_id=camera.id, queue_id=queue.id, person_count=measurement.person_count, density=measurement.density, estimated_wait_time=measurement.estimated_wait_time, status=measurement.status, recorded_at=measurement.recorded_at)

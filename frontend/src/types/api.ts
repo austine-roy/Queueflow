@@ -29,6 +29,50 @@ export interface Queue {
   updated_at: string;
 }
 
+export interface QueueCreate {
+  name: string;
+  location_id: number;
+  capacity: number;
+  status?: QueueStatus;
+}
+
+export interface Location {
+  id: number;
+  name: string;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Camera {
+  id: number;
+  name: string;
+  location_id: number;
+  queue_id: number | null;
+  source_type: "VIDEO_FILE" | "RTSP" | "WEBCAM" | "SIMULATED";
+  source_url: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CameraAnalysis {
+  camera_id: number;
+  queue_id: number;
+  person_count: number;
+  density: number;
+  estimated_wait_time: number;
+  status: QueueStatus;
+  recorded_at: string;
+}
+
+export interface QueuePrediction {
+  queue_id: number;
+  predicted_count: number;
+  model: "random_forest" | "insufficient_history";
+  measurement_count: number;
+}
+
 export interface Measurement {
   id: number;
   queue_id: number;

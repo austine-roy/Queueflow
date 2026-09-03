@@ -1,6 +1,6 @@
 """Historical analytics assembled close to the database."""
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -11,8 +11,26 @@ from app.models.queue import Queue
 from app.models.measurement import QueueMeasurement
 from app.schemas.analytics import QueueAnalyticsRead
 from app.schemas.measurement import MeasurementRead
+from app.services.prediction_service import predict_next_count
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
+
+
+@router.get("/queues/{queue_id}/prediction", summary="Predict the next queue count")
+def queue_prediction(queue_id: int, session: Session = Depends(get_db), _: object = Depends(require_roles(UserRole.VIEWER, UserRole.OPERATOR, UserRole.ADMIN))) -> dict:
+    queue = session.get(Queue, queue_id)
+    if queue is None:
+        raise HTTPException(status_code=404, detail="Queue not found")
+    measurements = (
+        session.query(QueueMeasurement)
+        .filter(QueueMeasurement.queue_id == queue_id)
+        .order_by(QueueMeasurement.recorded_at.desc(), QueueMeasurement.id.desc())
+        .limit(200)
+        .all()
+    )
+    measurements.reverse()
+    predicted_count, model = predict_next_count(measurements, queue.current_count)
+    return {"queue_id": queue_id, "predicted_count": predicted_count, "model": model, "measurement_count": len(measurements)}
 
 
 @router.get("/queues", response_model=list[QueueAnalyticsRead], summary="Get queue history and analytics")

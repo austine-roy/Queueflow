@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     queueflow_simulation_arrival_rate: float = Field(default=18, ge=0)
     queueflow_simulation_service_rate: float = Field(default=12, ge=0)
     queueflow_simulation_record_measurements: bool = True
+    yolo_model_path: str = "yolov8n.pt"
+    yolo_confidence: float = Field(default=0.35, ge=0, le=1)
     auth_secret_key: SecretStr = Field(min_length=32)
     auth_access_token_minutes: PositiveInt = Field(default=30)
     auth_login_rate_limit_attempts: PositiveInt = Field(default=5)

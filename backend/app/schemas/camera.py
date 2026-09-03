@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.models.enums import CameraSourceType
+from app.models.enums import CameraSourceType, QueueStatus
 
 
 class CameraCreate(BaseModel):
@@ -39,3 +39,19 @@ class CameraObservationCreate(BaseModel):
 
     person_count: int = Field(ge=0)
     density: float = Field(ge=0, le=1)
+
+
+class CameraFrameCreate(BaseModel):
+    """A sampled JPEG data URL captured by an authenticated browser client."""
+
+    frame_data: str = Field(min_length=32, max_length=5_000_000)
+
+
+class CameraAnalysisRead(BaseModel):
+    camera_id: int
+    queue_id: int
+    person_count: int
+    density: float
+    estimated_wait_time: float
+    status: QueueStatus
+    recorded_at: datetime
